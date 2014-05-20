@@ -68,6 +68,9 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         elif playerModes[playerTurn] == "RandomPlus2":
                 matrixX,matrixY= ai.randomMovePlus2(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "RandomPlusPlus":
+                matrixX,matrixY= ai.randomMovePlusPlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
             if res:
@@ -87,7 +90,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","RandomPlus2",1)
+gamePlay("Human","RandomPlusPlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1

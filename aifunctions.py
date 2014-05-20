@@ -22,6 +22,13 @@ def blockOpponent(gameBoard, pos, direction):
     print "CANNOT BLOCK"
     return
 
+def blockOrWin(gameBoard, pos):
+    for row in pos:
+        x,y= row[0], row[1]
+        if gameBoard[x,y] == 0 and isPlayable( (x,y), gameBoard ):
+            return (x,y)
+    print "Cannot BlockOrWin??? Hm....."
+
 '''
   '@param(x,y) - coordinates to cell in gameBoard
   '@param gameBoard - matrix representing game grid
@@ -87,4 +94,4 @@ b[1,1]= 1
 b[2,2]= 1
 b[3,3]= 2
 b[3:6,6]= 1
-cell= randomMovePlus(b)'''
+cell= randomMovePlusPlus(b)'''

@@ -80,3 +80,41 @@ def randomMovePlus2(gameBoard, playerTurn):
         return randomMove(gameBoard)
     else:
         return move
+        
+'''random player that blocks opponent or wins if possible
+  '@param gameBoard - underlying matrix representing game grid
+  '@return coordinates of cell in which player decides to play
+  '@calling randomMove, blockOpponent, getSequentialCells
+  '''
+def randomMovePlusPlus(gameBoard, playerTurn):
+    move= None
+    sequentialCells= glf.getSequentialCellsPlus(gameBoard,4)
+    print "sequential cells are: "
+    print sequentialCells
+    if playerTurn == 1:
+        possibleWins= sequentialCells[1]
+        possibleLosses= sequentialCells[2]
+    elif playerTurn == 2:
+        possibleWins= sequentialCells[2]
+        possibleLosses= sequentialCells[1]
+        
+    print "TRY TO WIN"
+    for pos, direction in possibleWins:
+        move= aif.blockOrWin(gameBoard, pos)
+        if move:
+            print "WOOOOOOOONNN, playing: ", move
+            break
+            
+    if not move:
+        print "TRY TO BLOCK OPPONENT"
+        for pos, direction in possibleLosses:
+            move= aif.blockOrWin(gameBoard, pos)
+            if move:
+                print "BLOCKING OPPONENT, playing: " , move
+                break
+
+    if not move:
+        print "COULD NOT BLOCK OR WIN, playing random"
+        return randomMove(gameBoard)
+    else:
+        return move

@@ -5,6 +5,16 @@ import gui
 
 
 '''
+  '@param gameBoard - the back-end matrix representing the board
+  '@return true if gameBoard is empty (all 0s), false otherwise
+  '@caller
+  '''
+def isEmpty( gameBoard ):
+    shape= py.shape(gameBoard)
+    emptyBoard= py.zeros(shape)
+    return py.array_equal( gameBoard, emptyBoard )
+
+'''
  '@param y - column corresponding to cell clicked by player
  '@param gameBoard - the back-end matrix representing the board
  '@return true if column y has a free (0.) entry, false otherwise (also if y is out of bounds)
@@ -271,12 +281,93 @@ def getSequentialCells( gameBoard, sequentialPositionsNeeded ):
     return sequentialCells
 
 '''
+  '@param gameBoard - backend matrix for game
+  '@param sequentialPositionsNeeded - target number of coins in sequence
+  '@return a set of 'sequentialPositionsNeeded of coins (minus 1) in sequence in gameBoard as a dictionary
+  '@caller ai.randomMovePlus2
+  '@calling isRangeOutOfBounds2
+  '''
+def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
+    winnerPlayerID= 0;
+    winningPositions= py.zeros((sequentialPositionsNeeded,2));
+    winningDirection= []
+    sequentialCells= {1:[],2:[]}
+    numrows,numcolumns= py.shape(gameBoard)
+    #directions used for vector manipulations.
+    directions= py.array([ [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0] ])
+    winnerFound= False;
+    #process each cell has endpoint of possible winning sequence.
+    row= 0
+    while not winnerFound and row < numrows:
+        column= 0
+        while not winnerFound and column < numcolumns:
+            #get value(i.e playerID) and coordinates of cell under consideration.
+            playerID= gameBoard[row,column]
+            if playerID != 0:
+                centerrow= row
+                centercolumn= column
+                direct= 0
+                while not winnerFound and direct < len(directions):
+                    rowdirection= directions[direct,0]
+                    columndirection= directions[direct, 1]
+                    isCenterWin= False
+                    #do nothing if out of bounds
+                    if not isRangeOutOfBounds2(centerrow,centercolumn,rowdirection,columndirection,sequentialPositionsNeeded):
+                        isCenterWin= True;
+                        #otherwise, check the next cell within the 'sequentialPositionsNeeded'
+                        #sequence and see if it equals the original center/playerID under consdieration.
+                        numberMissing= 0
+                        for iD in range( 0, sequentialPositionsNeeded ):
+                            cellEntry= gameBoard[centerrow + iD*rowdirection, centercolumn + iD*columndirection]          
+                            if cellEntry == 0:
+                                numberMissing+=1
+                                winningPositions[iD, :]= [centerrow + iD*rowdirection, centercolumn + iD*columndirection]
+                            elif cellEntry != playerID:
+                                isCenterWin= False
+                            else:
+                                winningPositions[iD, :]= [centerrow + iD*rowdirection, centercolumn + iD*columndirection]
+                            if numberMissing > 1:
+                                isCenterWin= False
+
+                            #end
+                        #end
+                    #end
+                    if isCenterWin:
+                        #return positions of the'sequentialPositionsNeeded' cells and the winner's ID.
+                        winnerFound= True
+                        winnerPlayerID= playerID
+                        winningDirection= [rowdirection, columndirection]
+                        sequentialCells[winnerPlayerID]= sequentialCells[winnerPlayerID] + [(winningPositions, winningDirection)]
+                        print sequentialCells
+                        winnerFound= False
+                        winnerPlayerID= 0
+                        winningDirection=[]
+                        winningPositions= py.zeros((sequentialPositionsNeeded,2));
+                       #winningPositions(1, :)=[centerrow centercolumn];
+                       # for resultRow=1:(sequentialPositionsNeeded-1)
+                       #   winningPositions(resultRow+1, :)=[(centerrow + resultRow*rowdirection) (centercolumn + resultRow*columndirection)];
+                       #end
+                    else:
+                        #winnerPlayerID= 0;
+                        winningPositions= py.zeros((sequentialPositionsNeeded,2))
+                    #end
+                    direct= direct + 1
+                #end           
+            #end
+            column= column + 1        
+    #end 
+        row= row + 1
+#end
+#here, there are no winners. winnerPlayerID is already 0.
+    return sequentialCells
+
+'''
 '@param (x,y) - coordinates clicked: x is the column, y is the row
 '@param boardHandler - handler for the pyplot object
 '@playerColor - color corresponding to 'player'
 '@param player - player who clicked in x,y
 '@spec updates grid and underlying matrix
-'@return updated gameBoard
+'@return coordintes where coin was placed in matrix
 '''
 def playMove( (x,y), gameBoard, boardHandler, playerColor, player ):
     column= gameBoard[:,x]
@@ -302,6 +393,8 @@ b[0,4]= 1
 b[1,1]= 1
 b[2,2]= 1
 b[3,3]= 2
+b[5,1:4]= 1
+b[3:6,6]= 2
 #res,winner,pos= moveYieldsWin(b, 4, (3,0),'r')
 #res,winner,pos,direction= boardContainsWinner(b, 4)
-cells= getSequentialCells(b, 3)'''
+cells= getSequentialCellsPlus(b, 4)'''
