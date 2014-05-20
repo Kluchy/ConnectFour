@@ -44,17 +44,17 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         moveValid= True
         if playerModes[playerTurn] == "Human":
             res= boardHandler.ginput(n=1, timeout=9999999)
-            print "receiving input: "
-            print res
+            #print "receiving input: "
+            #print res
             x,y= res[0] 
             x,y= math.floor(x),math.floor(y)
             print "Clicked cell " + str(x) + "-" + str(y)
             #update gameBoard if move valid
             if glf.isMoveValid( x, gameBoard ):
                 matrixX,matrixY= glf.playMove( (x,y), gameBoard, boardHandler, playerColor, playerTurn )
-                print gameBoard
-                print "matrixX: " + str(matrixX)
-                print "matrixY: " + str(matrixY)
+                #print gameBoard
+                #print "matrixX: " + str(matrixX)
+                #print "matrixY: " + str(matrixY)
             else:
                 #request click from same player
                 moveValid= False
@@ -69,7 +69,16 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 matrixX,matrixY= ai.randomMovePlus2(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "RandomPlusPlus":
-                matrixX,matrixY= ai.randomMovePlusPlus(gameBoard, playerTurn)
+                matrixX,matrixY,isRandom= ai.randomMovePlusPlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "BestLocal":
+                matrixX,matrixY= ai.bestLocalMove(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "BestLocalPlus":
+                matrixX,matrixY= ai.bestLocalMovePlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "BestLocalPlusPlus":
+                matrixX,matrixY= ai.bestLocalMovePlus(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
@@ -90,7 +99,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","RandomPlusPlus",1)
+gamePlay("Human","BestLocalPlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1

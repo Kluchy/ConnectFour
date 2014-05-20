@@ -338,7 +338,7 @@ def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
                         winnerPlayerID= playerID
                         winningDirection= [rowdirection, columndirection]
                         sequentialCells[winnerPlayerID]= sequentialCells[winnerPlayerID] + [(winningPositions, winningDirection)]
-                        print sequentialCells
+                        #print sequentialCells
                         winnerFound= False
                         winnerPlayerID= 0
                         winningDirection=[]
@@ -359,7 +359,7 @@ def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
         row= row + 1
 #end
 #here, there are no winners. winnerPlayerID is already 0.
-    return sequentialCells
+    return sequentialCells    
 
 '''
 '@param (x,y) - coordinates clicked: x is the column, y is the row
@@ -397,4 +397,4 @@ b[5,1:4]= 1
 b[3:6,6]= 2
 #res,winner,pos= moveYieldsWin(b, 4, (3,0),'r')
 #res,winner,pos,direction= boardContainsWinner(b, 4)
-cells= getSequentialCellsPlus(b, 4)'''
+cells= getSequentialCellsPlus(b, 2)'''

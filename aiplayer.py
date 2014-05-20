@@ -83,8 +83,9 @@ def randomMovePlus2(gameBoard, playerTurn):
         
 '''random player that blocks opponent or wins if possible
   '@param gameBoard - underlying matrix representing game grid
-  '@return coordinates of cell in which player decides to play
+  '@return coordinates of cell in which player decides to play, and a flag for randomness
   '@calling randomMove, blockOpponent, getSequentialCells
+  '@caller gamePlay, bestLocalMovePlus
   '''
 def randomMovePlusPlus(gameBoard, playerTurn):
     move= None
@@ -115,6 +116,37 @@ def randomMovePlusPlus(gameBoard, playerTurn):
 
     if not move:
         print "COULD NOT BLOCK OR WIN, playing random"
-        return randomMove(gameBoard)
+        return randomMove(gameBoard),1
     else:
+        return move,0
+
+def bestLocalMove(gameBoard, playerTurn):
+    #score board for this player and opponent
+    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    #get positions
+    for score in sorted(candidateSlots.keys(), reverse=True):
+        nextBests= candidateSlots[score]
+        for x,y,player in nextBests:
+            if yourScores[x-1,y] < 7 and aif.isPlayable( (x,y), gameBoard ):
+                return x,y
+            else:
+                print "CANNOT PLAY AT ", x, y,"-----------------------------------"
+    #return myScores, yourScores,candidateSlots
+
+def bestLocalMovePlus(gameBoard, playerTurn):
+    move,isRandom= randomMovePlusPlus(gameBoard, playerTurn)
+    if isRandom:
+        best= bestLocalMove(gameBoard, playerTurn)
+        if best:
+            return best
+        else:
+            print "GOING TO PLAY RANDOMLY"
+            return move
+    else:
+        print "NOT RANDDOM BUUUUUUUUUUUUUUUT"
         return move
+
+'''b= py.zeros((6,7))
+b[5,4:7]= 1
+b[2:5,6]=2
+x,y= bestLocalMove(b, 1)'''
