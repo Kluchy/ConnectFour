@@ -2,6 +2,7 @@
 import numpy as py
 import matplotlib.pyplot as plt
 import gui
+#import time
 
 
 '''
@@ -371,8 +372,8 @@ def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
 '''
 def playMove( (x,y), gameBoard, boardHandler, playerColor, player ):
     column= gameBoard[:,x]
-    print "column is: "
-    print column
+    #print "column is: "
+    #print column
     
     for i,cell in enumerate(reversed(column)):
         if cell == 0:

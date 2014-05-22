@@ -2,6 +2,12 @@ import numpy as py
 import gamelogicfunctions as glf
 
 
+def getOpponent(playerTurn):
+    if playerTurn == 1:
+        return 2
+    else:
+        return 1
+
 '''
   '@param gameBoard - matrix representing game grid
   '@param pos - m X 2 matrix where each row is a grid cell
@@ -15,13 +21,13 @@ def blockOpponent(gameBoard, pos, direction):
     right= pos[len(pos)-1]
     left= ( left[0] - direction[0], left[1] - direction[1] )
     right= ( right[0] + direction[0], right[1] + direction[1] )
-    print "left: ", left
-    print "right: ", right
+    #print "left: ", left
+    #print "right: ", right
     if isPlayable( right, gameBoard ):
         return right
     elif isPlayable( left, gameBoard ):
         return left
-    print "CANNOT BLOCK"
+    #print "CANNOT BLOCK"
     return
 
 '''
@@ -34,7 +40,7 @@ def blockOrWin(gameBoard, pos):
         x,y= row[0], row[1]
         if gameBoard[x,y] == 0 and isPlayable( (x,y), gameBoard ):
             return (x,y)
-    print "Cannot BlockOrWin??? Hm....."
+    #print "Cannot BlockOrWin??? Hm....."
 
 def scoreBoard(gameBoard, playerTurn):
     #2 black copies of board
@@ -64,8 +70,8 @@ def scoreBoard(gameBoard, playerTurn):
                 if gameBoard[r,c] == 0:
                     oldscore= myScores[r,c]
                     myScores[r,c]+= sequentialPos
-                    print "Adding ", r,c ,"to index ", myScores[r,c]
-                    print "Removeing ", r,c , "from index ", oldscore
+                    #print "Adding ", r,c ,"to index ", myScores[r,c]
+                    #print "Removeing ", r,c , "from index ", oldscore
                     try:
                         candidateSlots[myScores[r,c]]+= [(r,c,playerTurn)]
                     except KeyError:

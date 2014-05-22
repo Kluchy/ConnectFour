@@ -48,7 +48,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
             #print res
             x,y= res[0] 
             x,y= math.floor(x),math.floor(y)
-            print "Clicked cell " + str(x) + "-" + str(y)
+            #print "Clicked cell " + str(x) + "-" + str(y)
             #update gameBoard if move valid
             if glf.isMoveValid( x, gameBoard ):
                 matrixX,matrixY= glf.playMove( (x,y), gameBoard, boardHandler, playerColor, playerTurn )
@@ -80,6 +80,9 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         elif playerModes[playerTurn] == "lookAheadOne":
                 matrixX,matrixY= ai.lookAheadOne(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "lookAheadTwice":
+                matrixX,matrixY= ai.lookAheadTwice(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
             if res:
@@ -99,7 +102,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","lookAheadOne",1)
+gamePlay("Human","lookAheadTwice",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1
