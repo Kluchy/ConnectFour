@@ -108,6 +108,58 @@ def scoreBoard(gameBoard, playerTurn):
     return myScores, yourScores, candidateSlots 
 
 '''
+  '@param gameBoard1 - one possible future state of the game
+  '@param gameBoard2 - one possible future state of the game
+  '@playerturn - player 1 or 2
+  '@return 1 if gameBoard1 is better for playerTurn than gameBoard2, 
+          -1 if gameBoard2 is better,
+           0 if cannot determine
+  '@calling scoreBoard
+  '@caller ai.lookAheadOne
+  '''
+def isBetterState(gameBoard1, gameBoard2, playerTurn):
+    playerScores1, otherScores1, candidateSlots1= scoreBoard(gameBoard1, playerTurn)
+    playerScores2, otherScores2, candidateSlots2= scoreBoard(gameBoard2, playerTurn)
+    #score myScores boards
+    score1= 0
+    score2= 0
+    numrows,numcolumns= py.shape(playerScores1)
+    for r in range(0,numrows):
+        for c in range(0, numcolumns):
+            if playerScores1[r,c] > playerScores2[r,c]:
+                score1+=1
+            elif playerScores1[r,c] < playerScores2[r,c]:
+                score2+=1
+    #score opponent scores
+    s1= 0
+    s2= 0
+    for r in range(0,numrows):
+        for c in range(0, numcolumns):
+            if playerScores1[r,c] > playerScores2[r,c]:
+                s1+=1
+            elif playerScores1[r,c] < playerScores2[r,c]:
+                s2+=1
+    #analyze result and output 1 if first board is better than second board, 0 if even, -1 if second is better than first
+    if score1 > s1 and score2 < s2:
+        #board1 is better for me AND worse for my opponent
+        return 1
+    elif s1 > score1 and s2 < score2:
+        #board2 is better for me AND worse for my  opponent
+        return -1
+    elif score1 > s1 or score2 < s2:
+        #first board is better for me or worse for my opponent
+        return 1
+    elif s1 > score1 or s2 < score2:
+        #second board is better for me or worse for my opponent
+        return -1
+    elif score2 > s2 or score1 < s1:
+        #second board is better for opponent, worse for me
+        return -1
+    else:
+        return 0
+    #return score1, score2
+
+'''
   '@param(x,y) - coordinates to cell in gameBoard
   '@param gameBoard - matrix representing game grid
   '@return true if (x,y) is out of bounds, false otherwise
@@ -150,7 +202,7 @@ def getNextColumnMove(y,gameBoard):
             return x
     return -1
 
-''' TODO
+'''
   '@param gameBoard - matrix representing game grid
   '@return playable cells from gameBoard in list
   '@caller
@@ -170,13 +222,27 @@ def getValidMoves(gameBoard):
 
 '''#testing randomMove
 b= py.zeros((6,7))
-b[0,0:3]= 1
-b[1:4,0]= 2
-b[4,0]= 2
-b[0,4]= 1
-b[1,1]= 1
-b[2,2]= 1
-b[3,3]= 2
-b[3:6,6]= 1
+
+b[5,4:7]= 1
+b[2:5,6]=2
+b[5,3]= 2
+b[1,6]= 1
+b[5,2]= 1
+b[2,5]= 1
+b[3,5]= 1
+b[4,5]= 2
+b[4,4]= 1
+
+c= py.zeros((6,7))
+c[5,4:7]= 1
+c[2:5,6]=2
+c[5,3]= 2
+c[1,6]= 1
+c[5,2]= 1
+c[2,5]= 1
+c[3,5]= 1
+c[4,5]= 2
+c[4,3]= 1
 #cell= randomMovePlusPlus(b)
-valids= getValidMoves(b)'''
+#valids= getValidMoves(b)
+res= isBetterState(b,c,1)'''

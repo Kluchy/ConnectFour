@@ -77,8 +77,8 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         elif playerModes[playerTurn] == "BestLocalPlus":
                 matrixX,matrixY= ai.bestLocalMovePlus(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
-        elif playerModes[playerTurn] == "BestLocalPlusPlus":
-                matrixX,matrixY= ai.bestLocalMovePlus(gameBoard, playerTurn)
+        elif playerModes[playerTurn] == "lookAheadOne":
+                matrixX,matrixY= ai.lookAheadOne(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
@@ -88,7 +88,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 print "positons are: "
                 print pos
             elif glf.gameContainsTie(gameBoard):
-                print "Game is Tied!! Good Job"
+                print "Game is Tied!! GG"
                 return
             #next player's turn
             if playerTurn == 1:
@@ -99,7 +99,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","BestLocalPlus",1)
+gamePlay("Human","lookAheadOne",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1

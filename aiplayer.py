@@ -120,6 +120,13 @@ def randomMovePlusPlus(gameBoard, playerTurn):
     else:
         return move,0
 
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best local move as determiend by our formula, None otherwise
+  '@calling aif.scoreBoard, aif.isPlayable
+  '@caller bestLocalMovePlus, gamePlay
+  '''
 def bestLocalMove(gameBoard, playerTurn):
     #score board for this player and opponent
     myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
@@ -133,6 +140,13 @@ def bestLocalMove(gameBoard, playerTurn):
                 print "CANNOT PLAY AT ", x, y,"-----------------------------------"
     #return myScores, yourScores,candidateSlots
 
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on ourformula and current state, or random if cannot determine the best one
+  '@calling randomPlusPlus, bestLocalMove
+  '@caller gamePlay
+  '''
 def bestLocalMovePlus(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus(gameBoard, playerTurn)
     if isRandom:
@@ -146,7 +160,34 @@ def bestLocalMovePlus(gameBoard, playerTurn):
         print "NOT RANDDOM BUUUUUUUUUUUUUUUT"
         return move
 
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
+  '@calling bestLocalMovePlus, aif.isBetterState, aif.getValidMoves
+  '@caller gamePlay
+  '''
+def lookAheadOne(gameBoard, playerTurn):
+    #get all possible moves on gameBoard
+    possibleMoves= aif.getValidMoves(gameBoard)
+    #get best move based on state of resulting boards
+    bestMove= bestLocalMovePlus(gameBoard, playerTurn)
+    bestBoard= py.copy(gameBoard)
+    bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
+    for x,y in possibleMoves:
+        #play move
+        newBoard= py.copy(gameBoard)
+        newBoard[x,y]= playerTurn
+        isNewBetter= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard
+    #return move leading to that state
+    return bestMove
+
 '''b= py.zeros((6,7))
 b[5,4:7]= 1
 b[2:5,6]=2
-x,y= bestLocalMove(b, 1)'''
+#x,y= bestLocalMove(b, 1)
+x,y= lookAheadOne(b, 1)'''
