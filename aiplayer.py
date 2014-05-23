@@ -192,7 +192,7 @@ def lookAheadTwice(gameBoard, playerTurn):
     possibleMoves= aif.getValidMoves(gameBoard)
     #get best move based on state of resulting boards
     myBestMove= lookAheadOne(gameBoard, playerTurn)
-    bestBoard= py.copy(gameBoard)
+    bestBoard= py.copy(gameBoard) #board state after opponent makes a move
     #play my best move based on local state
     bestBoard[myBestMove]= playerTurn
     opponentTurn= aif.getOpponent(playerTurn)
@@ -217,10 +217,44 @@ def lookAheadTwice(gameBoard, playerTurn):
             yourBestMove= opponentMove
             
     return myBestMove
-        
+    
+def lookAheadThrice(gameBoard, playerTurn):
+    #get all possible moves on gameBoard
+    possibleMoves= aif.getValidMoves(gameBoard)
+    #get best move based on state of resulting boards
+    myBestMove= lookAheadTwice(gameBoard, playerTurn)
+    bestBoard= py.copy(gameBoard)
+    #play my best move based on local state
+    bestBoard[myBestMove]= playerTurn
+    opponentTurn= aif.getOpponent(playerTurn)
+    yourBestMove= lookAheadTwice(bestBoard, opponentTurn)
+    #play opponent's best move based on local state
+    bestBoard[yourBestMove]= opponentTurn
+    myOtherBestMove= lookAheadTwice(bestBoard, playerTurn)
+    bestBoard[myOtherBestMove]= playerTurn
+    
+    for x,y in possibleMoves:
+        #play move
+        newBoard= py.copy(gameBoard)
+        newBoard[x,y]= playerTurn
+        #get opponent's best move based on this new state
+
+        opponentMove= lookAheadTwice(newBoard, opponentTurn)
+        newBoard[opponentMove]= opponentTurn
+        #get my next best move based on this new state
+        myMove= lookAheadOne(newBoard, playerTurn)
+        newBoard[myMove]= playerTurn
+        #score this 'final' state
+        isNewBetter= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        if isNewBetter == 1:
+            bestBoard= newBoard
+            myBestMove= (x,y)
+    
+    return myBestMove
     
 '''b= py.zeros((6,7))
 b[5,4:7]= 1
 b[2:5,6]=2
 #x,y= bestLocalMove(b, 1)
-x,y= lookAheadTwice(b, 1)'''
+#x,y= lookAheadTwice(b, 1)
+x,y= lookAheadThrice(b, 1)'''

@@ -83,6 +83,9 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         elif playerModes[playerTurn] == "lookAheadTwice":
                 matrixX,matrixY= ai.lookAheadTwice(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "lookAheadThrice":
+                matrixX,matrixY= ai.lookAheadThrice(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
             if res:
@@ -102,7 +105,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","lookAheadTwice",1)
+gamePlay("Human","lookAheadThrice",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1
