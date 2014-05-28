@@ -355,6 +355,11 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
     possibleMoves= aif.getValidMoves(gameBoard)
     #get best move based on state of resulting boards
     bestMove, isBlockOrWin= lookAheadOnePlus(gameBoard, playerTurn)
+    x,y= bestMove
+    #score board for this player and opponent
+    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not isSafeToPlay((x,y), yourScores, gameBoard):
+        print "lookAheadTwicePlus: -- BEST MOVE IS A LOSS?!?!?!"
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
         print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
@@ -375,14 +380,18 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
         opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
         newBoard[opponentMove]= opponentTurn
         
-        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 4 )
+        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
         oldWinOpportunities= oldSequentialCells[1]
         oldLoseOpportunities= oldSequentialCells[2]
-        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
+        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
         newWinOpportunities= newSequentialCells[1]
         newLoseOpportunities= newSequentialCells[2]
-        print "About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-        if len(newWinOpportunities) > len(oldWinOpportunities):
+        #print "About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+        #if len(newWinOpportunities) > len(oldWinOpportunities):
+        myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
+        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+        #if len(newWinOpportunities) > len(oldWinOpportunities):
             print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
