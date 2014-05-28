@@ -15,6 +15,13 @@ def isEmpty( gameBoard ):
     emptyBoard= py.zeros(shape)
     return py.array_equal( gameBoard, emptyBoard )
 
+def isFull( gameBoard ):
+    rows,columns= py.shape(gameBoard)
+    for c in range(0, columns):
+        if gameBoard[0,c] == 0:
+            return False
+    return True
+
 '''
  '@param y - column corresponding to cell clicked by player
  '@param gameBoard - the back-end matrix representing the board

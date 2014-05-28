@@ -102,9 +102,10 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 print winner
                 print "positons are: "
                 print pos
+                return winner
             elif glf.gameContainsTie(gameBoard):
                 print "Game is Tied!! GG"
-                return
+                return 0
             #next player's turn
             if playerTurn == 1:
                 playerTurn= 2
@@ -114,7 +115,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","lookAheadOnePlus",1)
+#gamePlay("Human","lookAheadTwicePlus",1)
 #gamePlay("lookAheadTwicePlus","lookAheadOnePlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
