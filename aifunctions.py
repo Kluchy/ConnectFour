@@ -39,9 +39,17 @@ def blockOrWin(gameBoard, pos):
     for row in pos:
         x,y= row[0], row[1]
         if gameBoard[x,y] == 0 and isPlayable( (x,y), gameBoard ):
+            print "Blocking/Winning at ", x, y 
             return (x,y)
     #print "Cannot BlockOrWin??? Hm....."
 
+'''
+ '@param gameBoard - matrix representing game grid
+ '@param playerTurn - 1 or 2
+ '@return scores of 'gameBoard' for myself and opponent, and candidate moves
+ '@calling glf.getSequentialCellsPlus
+ '@caller ai.getLocalMove
+ '''
 def scoreBoard(gameBoard, playerTurn):
     #2 black copies of board
     myScores= (gameBoard != 0) * (-1)
@@ -113,6 +121,20 @@ def scoreBoard(gameBoard, playerTurn):
                     
     return myScores, yourScores, candidateSlots 
 
+def isBetterState(gameBoard1, gameBoard2, playerTurn):
+    #return compare(gameBoard1, gameBoard2, playerTurn)
+    isWinner, winner, pos, direction= glf.boardContainsWinner( gameBoard1, 4 )
+    if isWinner and winner != playerTurn:
+        return -1, 0, 0
+    elif isWinner and winner == playerTurn:
+        return 1, 100, 0
+    
+    isWinner, winner, pos, direction= glf.boardContainsWinner( gameBoard2, 4 )
+    if isWinner and winner != playerTurn:
+        return -1, 0, 0
+    elif isWinner and winner == playerTurn:
+        return 1, 100, 0
+    return 0, 0, 0
 '''
   '@param gameBoard1 - one possible future state of the game
   '@param gameBoard2 - one possible future state of the game
@@ -120,49 +142,106 @@ def scoreBoard(gameBoard, playerTurn):
   '@return 1 if gameBoard1 is better for playerTurn than gameBoard2, 
           -1 if gameBoard2 is better,
            0 if cannot determine
+           + myScore for board and opponentScore for board
   '@calling scoreBoard
   '@caller ai.lookAheadOne
+  '@TODO FIND BETTER WAY TO COMPARE TWO BOARDS
   '''
-def isBetterState(gameBoard1, gameBoard2, playerTurn):
+def compare(gameBoard1, gameBoard2, playerTurn):
     playerScores1, otherScores1, candidateSlots1= scoreBoard(gameBoard1, playerTurn)
     playerScores2, otherScores2, candidateSlots2= scoreBoard(gameBoard2, playerTurn)
     #score myScores boards
     score1= 0
     score2= 0
     numrows,numcolumns= py.shape(playerScores1)
-    for r in range(0,numrows):
-        for c in range(0, numcolumns):
-            if playerScores1[r,c] > playerScores2[r,c]:
+    #return 0, score1, score2
+    for score in sorted(candidateSlots1.keys(), reverse=True):
+        #if score < 4:
+          # break
+        nextBests= candidateSlots1[score]
+        score1= 0
+        score2= 0
+        for r,c,player in nextBests:
+            if player == playerTurn:
                 score1+=1
-            elif playerScores1[r,c] < playerScores2[r,c]:
+            else:
                 score2+=1
+    s1= 0
+    s2= 0       
+    for score in sorted(candidateSlots2.keys(), reverse=True):
+        #if score < 4:
+          #  break
+        nextBests= candidateSlots2[score]
+        for r,c,player in nextBests:
+            if player == playerTurn:
+                s1+=1
+            else:
+                s2+=1
+        '''if score1 > score2:
+            return 1, score1, score2
+        elif score1 < score2:
+            return -1, score1, score2
+    return 0, score1, score2'''
+                
+    '''for score in sorted(candidateSlots1.keys(), reverse=True):
+        nextBests= candidateSlots1[score]
+        for r,c,player in nextBests:
+            if playerScores1[r,c] > otherScores1[r,c]:
+                score1+=1
+            elif playerScores1[r,c] < otherScores1[r,c]:
+                score2+=1
+   #score opponent scores
+    s1= 0
+    s2= 0
+    for score in sorted(candidateSlots2.keys(), reverse=True):
+        nextBests= candidateSlots2[score]
+        for r,c,player in nextBests:
+            if otherScores2[r,c] > playerScores2[r,c]:
+                s1+=1
+            elif otherScores2[r,c] < playerScores2[r,c]:
+                s2+=1'''
+    #return 0, score1, score2
+    '''for r in range(0,numrows):
+        for c in range(0, numcolumns):
+            if playerScores1[r,c] > otherScores1[r,c]:
+                score1+=1
+            elif playerScores1[r,c] < otherScores1[r,c]:
+                score2+=1
+                
     #score opponent scores
     s1= 0
     s2= 0
     for r in range(0,numrows):
         for c in range(0, numcolumns):
-            if playerScores1[r,c] > playerScores2[r,c]:
+            if otherScores2[r,c] > playerScores2[r,c]:
                 s1+=1
-            elif playerScores1[r,c] < playerScores2[r,c]:
-                s2+=1
+            elif otherScores2[r,c] < playerScores2[r,c]:
+                s2+=1'''
     #analyze result and output 1 if first board is better than second board, 0 if even, -1 if second is better than first
     if score1 > s1 and score2 < s2:
         #board1 is better for me AND worse for my opponent
-        return 1
+        return 1, score1, score2
     elif s1 > score1 and s2 < score2:
         #board2 is better for me AND worse for my  opponent
-        return -1
+        return -1, score1, score2
     elif score1 > s1 or score2 < s2:
         #first board is better for me or worse for my opponent
-        return 1
+        return 1, score1, score2
     elif s1 > score1 or s2 < score2:
         #second board is better for me or worse for my opponent
-        return -1
+        return -1, score1, score2
     elif score2 > s2 or score1 < s1:
         #second board is better for opponent, worse for me
-        return -1
+        return -1, score1, score2
     else:
-        return 0
+        return 0, score1, score2
+    
+    '''if score1 > score2:
+        return 1, score1, score2
+    elif score1 < score2:
+        return -1, score1, score2
+    else:
+        return 0, score1, score2'''
     #return score1, score2
 
 '''

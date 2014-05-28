@@ -42,6 +42,8 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
     playerColor= gui.PLAYER1_COLOR
     while winner == -1:
         moveValid= True
+        print "-------------------------------------------------Start Turn---------------------------------------------"
+        print playerTurn
         if playerModes[playerTurn] == "Human":
             res= boardHandler.ginput(n=1, timeout=9999999)
             #print "receiving input: "
@@ -75,17 +77,24 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 matrixX,matrixY= ai.bestLocalMove(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "BestLocalPlus":
-                matrixX,matrixY= ai.bestLocalMovePlus(gameBoard, playerTurn)
+                (matrixX,matrixY),isBlockOrWin= ai.bestLocalMovePlus(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "lookAheadOne":
-                matrixX,matrixY= ai.lookAheadOne(gameBoard, playerTurn)
+                (matrixX,matrixY),isBlockOrwin= ai.lookAheadOne(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "lookAheadTwice":
-                matrixX,matrixY= ai.lookAheadTwice(gameBoard, playerTurn)
+                (matrixX,matrixY),isBlockOrWin= ai.lookAheadTwice(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "lookAheadThrice":
-                matrixX,matrixY= ai.lookAheadThrice(gameBoard, playerTurn)
+                (matrixX,matrixY),isBlockOrWin= ai.lookAheadThrice(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "lookAheadOnePlus":
+                (matrixX,matrixY),isBlockOrwin= ai.lookAheadOnePlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "lookAheadTwicePlus":
+                (matrixX,matrixY),isBlockOrwin= ai.lookAheadTwicePlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        print "-------------------------------------------------End Turn---------------------------------------------"
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
             if res:
@@ -105,7 +114,8 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","lookAheadThrice",1)
+#gamePlay("Human","lookAheadTwice",1)
+gamePlay("lookAheadOnePlus","lookAheadThrice",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1

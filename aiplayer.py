@@ -11,11 +11,12 @@ import aifunctions as aif
   '''
 def randomMove(gameBoard):
     numrows, numcolumns= py.shape(gameBoard)
-    randomRow= random.randint(0,numrows-1)
+    randomRow= 5 #random.randint(0,numrows-1)
     randomColumn= random.randint(0,numcolumns-1)
     while not glf.isMoveValid( randomColumn, gameBoard):
-        randomRow= random.randint(0,numrows-1)
-        randomColumn= random.randint(0,numcolumns-1)    
+        #randomRow= random.randint(0,numrows-1)
+        randomColumn= random.randint(0,numcolumns-1)   
+    print "playing randomly at " ,randomRow, randomColumn 
     return randomRow, randomColumn
 
 '''random player that tries to block opponent or win if it notices the possibility
@@ -119,6 +120,13 @@ def randomMovePlusPlus(gameBoard, playerTurn):
         return randomMove(gameBoard),1
     else:
         return move,0
+    
+'''
+  '@return true if slot above does not yield to opponent win
+  '@caller bestLocalMove, lookAheadOnePlus
+  '''
+def isSafeToPlay((x,y), opponentScores, gameBoard):
+    return opponentScores[x-1,y] < 7 and aif.isPlayable( (x,y), gameBoard )
 
 '''
   '@param gameBoard - underlying matrix representing game grid
@@ -134,7 +142,7 @@ def bestLocalMove(gameBoard, playerTurn):
     for score in sorted(candidateSlots.keys(), reverse=True):
         nextBests= candidateSlots[score]
         for x,y,player in nextBests:
-            if yourScores[x-1,y] < 7 and aif.isPlayable( (x,y), gameBoard ):
+            if isSafeToPlay((x,y), yourScores, gameBoard):
                 return x,y
             else:
                 #print "CANNOT PLAY AT ", x, y,"-----------------------------------"
@@ -147,19 +155,22 @@ def bestLocalMove(gameBoard, playerTurn):
   '@return best move based on ourformula and current state, or random if cannot determine the best one
   '@calling randomPlusPlus, bestLocalMove
   '@caller gamePlay
+  '@TODO ONLY RETURN TRUE WHEN RANDOMMOVEPLUS RETURNS BLOCKORWIN
   '''
 def bestLocalMovePlus(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus(gameBoard, playerTurn)
     if isRandom:
         best= bestLocalMove(gameBoard, playerTurn)
         if best:
-            return best
+            print "bestLocalMovePlus: ", best
+            return best, not isRandom
         else:
             #print "GOING TO PLAY RANDOMLY"
-            return move
+            return move, not isRandom
     else:
         #print "NOT RANDDOM BUUUUUUUUUUUUUUUT"
-        return move
+        print "bestLocalMovePlus Block Or Win: ", move
+        return move, not isRandom
 
 '''
   '@param gameBoard - underlying matrix representing game grid
@@ -172,31 +183,46 @@ def lookAheadOne(gameBoard, playerTurn):
     #get all possible moves on gameBoard
     possibleMoves= aif.getValidMoves(gameBoard)
     #get best move based on state of resulting boards
-    bestMove= bestLocalMovePlus(gameBoard, playerTurn)
+    bestMove, isBlockOrWin= bestLocalMovePlus(gameBoard, playerTurn)
+    if isBlockOrWin:
+        #there cannot be a better play than a block or a win
+        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        return bestMove, isBlockOrWin
+    #find the best play that is neither a block or a win
     bestBoard= py.copy(gameBoard)
     bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
     for x,y in possibleMoves:
         #play move
         newBoard= py.copy(gameBoard)
         newBoard[x,y]= playerTurn
-        isNewBetter= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
         if isNewBetter == 1:
             print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
     #return move leading to that state
-    return bestMove
+    return bestMove, isBlockOrWin
 
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and two look aheads, or random if cannot determine the best one
+  '@calling lookAheadOne, aif.getValidMoves, aif.getOpponent, aif.isBetterState
+  '@caller lookAheadThrice
+  '''
 def lookAheadTwice(gameBoard, playerTurn):
     #get all possible moves on gameBoard
     possibleMoves= aif.getValidMoves(gameBoard)
     #get best move based on state of resulting boards
-    myBestMove= lookAheadOne(gameBoard, playerTurn)
+    myBestMove, isBlockOrWin= lookAheadOne(gameBoard, playerTurn)
+    if isBlockOrWin:
+        print "FOUND IS BLOCK OR WIN FROM LOOKAHEADONE"
+        return myBestMove, isBlockOrWin
     bestBoard= py.copy(gameBoard) #board state after opponent makes a move
     #play my best move based on local state
     bestBoard[myBestMove]= playerTurn
     opponentTurn= aif.getOpponent(playerTurn)
-    yourBestMove= lookAheadOne(bestBoard, opponentTurn)
+    yourBestMove, _= lookAheadOne(bestBoard, opponentTurn)
     #play opponent's best move based on local state
     bestBoard[yourBestMove]= opponentTurn
     
@@ -206,31 +232,43 @@ def lookAheadTwice(gameBoard, playerTurn):
         newBoard[x,y]= playerTurn
         #get opponent's best move based on this new state
 
-        opponentMove= lookAheadOne(newBoard, opponentTurn)
+        opponentMove, _= lookAheadOne(newBoard, opponentTurn)
         opponentBoard= py.copy(newBoard)
         opponentBoard[opponentMove]= opponentTurn
         #score state opponent led to
-        isNewBetter= aif.isBetterState(opponentBoard, bestBoard, opponentTurn)
-        if isNewBetter == -1:
+        isNewBetter, myScore, yourScore= aif.isBetterState(opponentBoard, bestBoard, opponentTurn)
+        if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN lookAheadOne: ", x,y
             myBestMove= (x,y)
             bestBoard= opponentBoard
             yourBestMove= opponentMove
             
-    return myBestMove
-    
+    return myBestMove, isBlockOrWin
+
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and two look aheads, or random if cannot determine the best one
+  '@calling lookAheadOne, lookAheadTwice, aif.getValidMoves, aif.getOpponent, aif.isBetterState
+  '@caller gamePlay
+  '''
 def lookAheadThrice(gameBoard, playerTurn):
     #get all possible moves on gameBoard
     possibleMoves= aif.getValidMoves(gameBoard)
     #get best move based on state of resulting boards
-    myBestMove= lookAheadTwice(gameBoard, playerTurn)
+    myBestMove, isBlockOrWin= lookAheadTwice(gameBoard, playerTurn)
+    if isBlockOrWin:
+        print "NOT GONNA BOTHER, FOUND BLOCK OR WIN"
+        return myBestMove, isBlockOrWin
     bestBoard= py.copy(gameBoard)
     #play my best move based on local state
     bestBoard[myBestMove]= playerTurn
     opponentTurn= aif.getOpponent(playerTurn)
-    yourBestMove= lookAheadTwice(bestBoard, opponentTurn)
+    yourBestMove, _= lookAheadTwice(bestBoard, opponentTurn)
+    print "lookAheadThrice: ", yourBestMove
     #play opponent's best move based on local state
     bestBoard[yourBestMove]= opponentTurn
-    myOtherBestMove= lookAheadTwice(bestBoard, playerTurn)
+    myOtherBestMove, _= lookAheadTwice(bestBoard, playerTurn)
     bestBoard[myOtherBestMove]= playerTurn
     
     for x,y in possibleMoves:
@@ -239,18 +277,122 @@ def lookAheadThrice(gameBoard, playerTurn):
         newBoard[x,y]= playerTurn
         #get opponent's best move based on this new state
 
-        opponentMove= lookAheadTwice(newBoard, opponentTurn)
+        opponentMove, _= lookAheadTwice(newBoard, opponentTurn)
         newBoard[opponentMove]= opponentTurn
         #get my next best move based on this new state
-        myMove= lookAheadOne(newBoard, playerTurn)
+        myMove, _= lookAheadOne(newBoard, playerTurn)
         newBoard[myMove]= playerTurn
         #score this 'final' state
-        isNewBetter= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        print  isNewBetter, myScore, yourScore
         if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN lookAheadTwice: ", x,y
             bestBoard= newBoard
             myBestMove= (x,y)
     
-    return myBestMove
+    return myBestMove, not isBlockOrWin
+    
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
+  '@calling bestLocalMovePlus, aif.getValidMoves
+  '@caller gamePlay
+  '''
+def lookAheadOnePlus(gameBoard, playerTurn):
+    #get all possible moves on gameBoard
+    possibleMoves= aif.getValidMoves(gameBoard)
+    #get best move based on state of resulting boards
+    bestMove, isBlockOrWin= bestLocalMovePlus(gameBoard, playerTurn)
+    x,y= bestMove
+    #score board for this player and opponent
+    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not isSafeToPlay((x,y), yourScores, gameBoard):
+        print "BEST MOVE IS A LOSS?!?!?!"
+    if isBlockOrWin:
+        #there cannot be a better play than a block or a win
+        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        return bestMove, isBlockOrWin
+    #find the best play that is neither a block or a win
+    bestBoard= py.copy(gameBoard)
+    bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
+    for x,y in possibleMoves:
+        #play move
+        newBoard= py.copy(gameBoard)
+        newBoard[x,y]= playerTurn
+        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 2 )
+        oldWinOpportunities= oldSequentialCells[1]
+        oldLoseOpportunities= oldSequentialCells[2]
+        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 2 )
+        newWinOpportunities= newSequentialCells[1]
+        newLoseOpportunities= newSequentialCells[2]
+        #print "About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+        #if len(newWinOpportunities) > len(oldWinOpportunities):
+        myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
+        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard
+        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard'''
+    #return move leading to that state
+    return bestMove, isBlockOrWin
+    
+    
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
+  '@calling lookAheadOnePlus, aif.getValidMoves
+  '@caller gamePlay
+  '''
+def lookAheadTwicePlus(gameBoard, playerTurn):
+    #get all possible moves on gameBoard
+    possibleMoves= aif.getValidMoves(gameBoard)
+    #get best move based on state of resulting boards
+    bestMove, isBlockOrWin= lookAheadOnePlus(gameBoard, playerTurn)
+    if isBlockOrWin:
+        #there cannot be a better play than a block or a win
+        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        return bestMove, isBlockOrWin
+
+    bestBoard= py.copy(gameBoard)
+    bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
+    #get best move for opponent
+    opponentTurn= aif.getOpponent(playerTurn)
+    yourBestMove, _= lookAheadOnePlus(bestBoard, opponentTurn)
+    bestBoard[yourBestMove]= opponentTurn
+    #find the best play that is neither a block or a win
+    for x,y in possibleMoves:
+        #play move
+        newBoard= py.copy(gameBoard)
+        newBoard[x,y]= playerTurn
+        #get opponent move
+        opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
+        newBoard[opponentMove]= opponentTurn
+        
+        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 4 )
+        oldWinOpportunities= oldSequentialCells[1]
+        oldLoseOpportunities= oldSequentialCells[2]
+        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
+        newWinOpportunities= newSequentialCells[1]
+        newLoseOpportunities= newSequentialCells[2]
+        print "About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+        if len(newWinOpportunities) > len(oldWinOpportunities):
+            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard
+        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard'''
+    #return move leading to that state
+    return bestMove, isBlockOrWin
     
 '''b= py.zeros((6,7))
 b[5,4:7]= 1
