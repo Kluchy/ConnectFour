@@ -267,7 +267,7 @@ def lookAheadThrice(gameBoard, playerTurn):
     bestBoard[myBestMove]= playerTurn
     opponentTurn= aif.getOpponent(playerTurn)
     yourBestMove, _= lookAheadTwice(bestBoard, opponentTurn)
-    print "lookAheadThrice: ", yourBestMove
+    print "lookAheadThrice -- yourBestMove ", yourBestMove
     #play opponent's best move based on local state
     bestBoard[yourBestMove]= opponentTurn
     myOtherBestMove, _= lookAheadTwice(bestBoard, playerTurn)
@@ -387,6 +387,74 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
         #get opponent move
         opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
         newBoard[opponentMove]= opponentTurn
+        
+        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
+        oldWinOpportunities= oldSequentialCells[playerTurn]
+        oldLoseOpportunities= oldSequentialCells[opponentTurn]
+        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
+        newWinOpportunities= newSequentialCells[playerTurn]
+        newLoseOpportunities= newSequentialCells[opponentTurn]
+        #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+        print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
+        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+        #if len(newWinOpportunities) > len(oldWinOpportunities):
+        myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
+        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+        #if len(newWinOpportunities) > len(oldWinOpportunities):
+            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard
+        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+        if isNewBetter == 1:
+            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+            bestMove= (x,y)
+            bestBoard= newBoard'''
+    #return move leading to that state
+    return bestMove, isBlockOrWin
+    
+'''
+  '@param gameBoard - underlying matrix representing game grid
+  '@param playerTurn - playerID in game 1 or 2)
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
+  '@calling lookAheadOnePlus, aif.getValidMoves
+  '@caller gamePlay
+  '''
+def lookAheadThricePlus(gameBoard, playerTurn):
+    #get all possible moves on gameBoard
+    possibleMoves= aif.getValidMoves(gameBoard)
+    #get best move based on state of resulting boards
+    bestMove, isBlockOrWin= lookAheadTwicePlus(gameBoard, playerTurn)
+    x,y= bestMove
+    #score board for this player and opponent
+    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not isSafeToPlay((x,y), yourScores, gameBoard):
+        print "lookAheadThricePlus: -- BEST MOVE IS A LOSS?!?!?!"
+    if isBlockOrWin:
+        #there cannot be a better play than a block or a win
+        print "lookAheadThricePlus: --- FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        return bestMove, isBlockOrWin
+
+    bestBoard= py.copy(gameBoard)
+    bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
+    #get best move for opponent
+    opponentTurn= aif.getOpponent(playerTurn)
+    yourBestMove, _= lookAheadTwicePlus(bestBoard, opponentTurn)
+    bestBoard[yourBestMove]= opponentTurn
+    
+    myOtherBestMove, _= lookAheadTwicePlus(bestBoard, playerTurn)
+    bestBoard[myOtherBestMove]= playerTurn
+    
+    #find the best play that is neither a block or a win
+    for x,y in possibleMoves:
+        #play move
+        newBoard= py.copy(gameBoard)
+        newBoard[x,y]= playerTurn
+        #get opponent move
+        opponentMove, _= lookAheadTwicePlus(gameBoard, opponentTurn)
+        newBoard[opponentMove]= opponentTurn
+        #get my next best move based on this new state
+        myMove, _= lookAheadTwicePlus(newBoard, playerTurn)
+        newBoard[myMove]= playerTurn
         
         oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
         oldWinOpportunities= oldSequentialCells[playerTurn]

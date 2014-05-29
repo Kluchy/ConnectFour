@@ -25,5 +25,5 @@ def battle(playerMode1, playerMode2):
         print "With ", playerMode1,"=1 and ", playerMode2,"=2, wins: ", wins
         #time.sleep(3)
     print final
-battle("lookAheadTwicePlus", "lookAheadThrice")
+battle("BestLocalPlus", "lookAheadThricePlus")
 #battle("lookAheadOnePlus", "lookAheadTwicePlus")
