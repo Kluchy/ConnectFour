@@ -280,13 +280,208 @@ def isPlayable( (x,y), gameBoard ):
 def isSafeToPlay((x,y), opponentScores, gameBoard):
     return opponentScores[x-1,y] < 7 and isPlayable( (x,y), gameBoard )
 
+def isSafeToPlayPlus( (x,y), playerTurn, gameBoard):
+    temp=py.copy(gameBoard)
+    opponentTurn= getOpponent(playerTurn)
+    temp[x-1,y]= opponentTurn
+    isLoss, _, _= glf.moveYieldsWin(temp, 4, (x-1,y), 'r')
+    return not isLoss and isPlayable( (x,y), gameBoard )
+
 '''
   '@param x,y - target move
-  '@param TODO TODO TODO TODO TODO refine
+  '@param TODO TODO TODO TODO TODO refine 
   '@spec return true if x,y allows opponent to win or if future board already has a win for opponent
   '''
 def leadsToLoss((x,y)):
     return
+    
+def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
+    #if futureoard has a trap, find missing slot that will lead to trap and play there.
+    #return  flag and that position if it exists and it's possible to play there now. 
+    #if exists but not of them are playable yet, return flag and (-1,-1)
+    opponentTurn= getOpponent(playerTurn)
+    possibleLosses= []
+    trapFound= False
+    yourOrScores, myOrScores, orCandidateSlots= scoreBoard(originalBoard, opponentTurn)
+    yourFScores, myFScores, futureCandidateSlots= scoreBoard(futureBoard, opponentTurn)
+    for score in futureCandidateSlots.keys():
+        if trapFound:
+            break
+        if score >= 7:
+            #get slots
+            loseSlots= futureCandidateSlots[score]
+            for slot in loseSlots:
+                slotX,slotY,player= slot
+                if player != opponentTurn:
+                    pass
+                elif yourFScores[slotX-1,slotY] >= 7:
+                    #this slot and the one above it form a trap
+                    temp= py.copy(futureBoard)
+                    temp[slotX-1,slotY]= opponentTurn
+                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX-1,slotY), 'r')
+                    temp[slotX-1,slotY]= 0
+                    temp[slotX,slotY]= opponentTurn
+                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
+                    if isLoss1 and isLoss2:
+                        trapFound= True
+                        print slotX, slotY, " and ", slotX-1,slotY 
+                        break
+                        
+                    #find sequentialPositions leading to a win with this slot
+                    #get playable moves on current board
+                    #play at a slot that is in intersection of sequentialPositions and playable moves
+                elif yourFScores[slotX+1,slotY] >= 7:
+                    #this slot and the one below it form a trap
+                    temp= py.copy(futureBoard)
+                    temp[slotX+1,slotY]= opponentTurn
+                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX+1,slotY), 'r')
+                    temp[slotX+1,slotY]= 0
+                    temp[slotX,slotY]= opponentTurn
+                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
+                    if isLoss1 and isLoss2:
+                        trapFound= True
+                        print slotX, slotY, " and ", slotX+1,slotY
+                        break
+                if slot not in possibleLosses:
+                    possibleLosses.append(slot)
+    if trapFound: 
+        myX,myY= myMove
+        yourX,yourY= opponentMove
+        if isPlayable(opponentMove, originalBoard):
+            #then can bprevent trap by playing where opponent would have played
+            return 1, opponentMove
+        elif myY == yourY and myX == yourX+1:
+            #then my move opened up the possibility of a trap: do not play at my move
+            return -1, myMove
+        else:
+            print "preventing trap failed because current moves did not lead to it! What happened..........."
+            return -2, myMove 
+    else:
+        return 0, myMove
+
+def isTrap(pos1, pos2, originalBoard):
+    for row1 in pos1:
+        for row2 in pos2:
+            playable1= isPlayable( (row1[0], row1[1]), originalBoard )
+            playable2= isPlayable( (row2[0], row2[1]), originalBoard )
+            print "considering ", row1, " and ", row2
+            if playable1 and playable2:
+                #those two slots do not depend on each other
+                print" well........"
+                pass
+            if not playable2:
+                #see if 2 depends on 1
+                temp= py.copy(originalBoard)
+                temp[row1[0],row1[1]]= 3
+                if isPlayable( (row2[0], row2[1]), temp ):
+                    #2 depends on 1
+                    return True
+            if not playable1:
+                #see if 1 depends on 2
+                temp= py.copy(originalBoard)
+                temp[row2[0],row2[1]]= 3
+                if isPlayable( (row1[0], row1[1]), temp ):
+                    #1 depends on 2
+                    return True
+            else:
+                print "should not go in here"
+                pass
+    return False
+    
+def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
+    #if futureoard has a trap, find missing slot that will lead to trap and play there.
+    #return  flag and that position if it exists and it's possible to play there now. 
+    print "IN"
+    #if exists but not of them are playable yet, return flag and (-1,-1)
+    opponentTurn= getOpponent(playerTurn)
+    possibleLosses= []
+    traps= []
+    trapFound= False
+    yourOrScores, myOrScores, orCandidateSlots= scoreBoard(originalBoard, opponentTurn)
+    yourFScores, myFScores, futureCandidateSlots= scoreBoard(futureBoard, opponentTurn)
+    for score in futureCandidateSlots.keys():
+        #if trapFound:
+         #   break
+        if score >= 7:
+            #get slots
+            loseSlots= futureCandidateSlots[score]
+            for slot in loseSlots:
+                slotX,slotY,player= slot
+                if player != opponentTurn:
+                    print" ok"
+                    pass
+                else:
+                    print"this is for opponent"
+                    temp= py.copy(futureBoard)
+                    temp[slotX,slotY]= opponentTurn
+                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
+                    print isLoss2
+                    if isLoss2:
+                        #check if any pair seen thus far are actually part of a trap
+                        for ((x,y),pos) in possibleLosses:
+                            print "loop"
+                            print "comparing ", pos , " with  ", pos2
+                            if isTrap(pos, pos2, originalBoard):
+                                traps.append(  [ ( (x,y),pos ),( (slotX,slotY),pos2 ) ] )
+                                trapFound= True
+                                #break
+                        possibleLosses.append( ((slotX,slotY), pos2) )
+
+                #if len(possibleLosses) > 1:
+                 #   trapFound= True
+                  #  break
+                '''elif yourFScores[slotX-1,slotY] >= 7:
+                    #this slot and the one above it form a trap
+                    temp= py.copy(futureBoard)
+                    temp[slotX-1,slotY]= opponentTurn
+                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX-1,slotY), 'r')
+                    temp[slotX-1,slotY]= 0
+                    temp[slotX,slotY]= opponentTurn
+                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
+                    if isLoss1 and isLoss2:
+                        trapFound= True
+                        print slotX, slotY, " and ", slotX-1,slotY 
+                        break
+                        
+                    #find sequentialPositions leading to a win with this slot
+                    #get playable moves on current board
+                    #play at a slot that is in intersection of sequentialPositions and playable moves
+                elif yourFScores[slotX+1,slotY] >= 7:
+                    #this slot and the one below it form a trap
+                    temp= py.copy(futureBoard)
+                    temp[slotX+1,slotY]= opponentTurn
+                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX+1,slotY), 'r')
+                    temp[slotX+1,slotY]= 0
+                    temp[slotX,slotY]= opponentTurn
+                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
+                    if isLoss1 and isLoss2:
+                        trapFound= True
+                        print slotX, slotY, " and ", slotX+1,slotY
+                        break'''
+                #if slot not in possibleLosses:
+                 #   possibleLosses.append(slot)
+    if trapFound: 
+        myX,myY= myMove
+        yourX,yourY= opponentMove
+        for pair in traps:
+            for ((x,y), pos) in pair:
+                for row in pos:
+                    print "checking for prevention block: ", row[0], row[1]
+                    if isSafeToPlayPlus( (row[0],row[1]), playerTurn, originalBoard):
+                        return 1, (row[0],row[1])
+        return -1, myMove
+        '''if isPlayable(opponentMove, originalBoard):
+            #then can bprevent trap by playing where opponent would have played
+            return 1, opponentMove
+        elif myY == yourY and myX == yourX+1:
+            #then my move opened up the possibility of a trap: do not play at my move
+            return -1, myMove
+        else:
+            print "preventing trap failed because current moves did not lead to it! What happened..........."
+            return -2, myMove '''
+    else:
+        return 0, myMove
+
 
 '''
   '@param y - integer reresenting column of gameBoard
@@ -331,7 +526,7 @@ b[5,2]= 1
 b[2,5]= 1
 b[3,5]= 1
 b[4,5]= 2
-b[4,4]= 1
+b[4,4]= 1'''
 
 c= py.zeros((6,7))
 c[5,4:7]= 1
@@ -343,6 +538,15 @@ c[2,5]= 1
 c[3,5]= 1
 c[4,5]= 2
 c[4,3]= 1
+c[4,0:3]= 2
+c[3,2:4]= 2
+c2=py.copy(c)
+c[2,2:4]= 1
+c2[2,2]= 1
+c2[3,3]= 0
+res= preventTrap( c2, (3,3), (2,3), c, 2)
+resp= preventTrapPlus( c2, (3,3), (2,3), c, 2)
+
 #cell= randomMovePlusPlus(b)
 #valids= getValidMoves(b)
-res= isBetterState(b,c,1)'''
+#res= isBetterState(b,c,1)

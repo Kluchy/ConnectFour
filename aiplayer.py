@@ -375,41 +375,78 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
 
     bestBoard= py.copy(gameBoard)
     bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
-    #get best move for opponent
+    trapFlag= 0
+    slot= (-1,-1)
     opponentTurn= aif.getOpponent(playerTurn)
+    opponentPossibleMoves= aif.getValidMoves(bestBoard)
+    for x,y in opponentPossibleMoves:
+        print" opoonent move: ", x,y
+        temp= py.copy(bestBoard)
+        temp[x,y]= opponentTurn
+        t, s= aif.preventTrapPlus(gameBoard,bestMove, (x,y), temp, playerTurn)
+        print "flag flagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflag ", t
+        if t == 1:
+            print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
+            print slot
+            return s, 2
+        elif t == -1:
+            trapFlag= t
+            slot= s
+            break
+        elif t == 0:
+            pass
+    #get best move for opponent
     yourBestMove, _= lookAheadOnePlus(bestBoard, opponentTurn)
     bestBoard[yourBestMove]= opponentTurn
+    
+    
+    #trapFlag, slot= aif.preventTrapPlus(gameBoard,bestMove, yourBestMove, bestBoard, playerTurn)
+    print "trapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflagrapflag ", trapFlag
+    '''if trapFlag == 1: 
+        print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
+        print slot
+        return slot, 2'''
     #find the best play that is neither a block or a win
     for x,y in possibleMoves:
-        #play move
-        newBoard= py.copy(gameBoard)
-        newBoard[x,y]= playerTurn
-        #get opponent move
-        opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
-        newBoard[opponentMove]= opponentTurn
-        
-        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
-        oldWinOpportunities= oldSequentialCells[playerTurn]
-        oldLoseOpportunities= oldSequentialCells[opponentTurn]
-        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
-        newWinOpportunities= newSequentialCells[playerTurn]
-        newLoseOpportunities= newSequentialCells[opponentTurn]
-        #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-        print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
-        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
-        #if len(newWinOpportunities) > len(oldWinOpportunities):
-        myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
-        if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
-        #if len(newWinOpportunities) > len(oldWinOpportunities):
-            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
-            bestMove= (x,y)
-            bestBoard= newBoard
-        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-        if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
-            bestMove= (x,y)
-            bestBoard= newBoard'''
+        if trapFlag == -1 and (x,y) == slot:
+            print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
+            pass
+        else:
+            #play move
+            newBoard= py.copy(gameBoard)
+            newBoard[x,y]= playerTurn
+            #get opponent move
+            opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
+            newBoard[opponentMove]= opponentTurn
+            if trapFlag == -1 and bestMove == slot and (x,y) != slot and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
+                print "REPLACING BAD BEST MOVE LEADING TO TRAP WITH ", x,y
+                bestMove= (x,y)
+                bestBoard= newBoard
+                trapFlag= 0
+            oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
+            oldWinOpportunities= oldSequentialCells[playerTurn]
+            oldLoseOpportunities= oldSequentialCells[opponentTurn]
+            newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
+            newWinOpportunities= newSequentialCells[playerTurn]
+            newLoseOpportunities= newSequentialCells[opponentTurn]
+            #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+            print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
+            print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+            #if len(newWinOpportunities) > len(oldWinOpportunities):
+            myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
+            if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+            #if len(newWinOpportunities) > len(oldWinOpportunities):
+                print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+                bestMove= (x,y)
+                bestBoard= newBoard
+            '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+            if isNewBetter == 1:
+                print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+                bestMove= (x,y)
+                bestBoard= newBoard'''
     #return move leading to that state
+    if trapFlag == -1 and bestMove == slot:
+        print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
     return bestMove, isBlockOrWin
     
 '''
