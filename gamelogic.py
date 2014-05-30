@@ -118,7 +118,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","lookAheadTwicePlus",1)
+gamePlay("Human","lookAheadThricePlus",1)
 #gamePlay("lookAheadTwicePlus","lookAheadOnePlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))

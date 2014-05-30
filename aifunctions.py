@@ -274,6 +274,21 @@ def isPlayable( (x,y), gameBoard ):
         return gameBoard[x+1,y] != 0 and gameBoard[x,y] == 0
 
 '''
+  '@return true if slot above does not yield to opponent win
+  '@caller bestLocalMove, lookAheadOnePlus
+  '''
+def isSafeToPlay((x,y), opponentScores, gameBoard):
+    return opponentScores[x-1,y] < 7 and isPlayable( (x,y), gameBoard )
+
+'''
+  '@param x,y - target move
+  '@param TODO TODO TODO TODO TODO refine
+  '@spec return true if x,y allows opponent to win or if future board already has a win for opponent
+  '''
+def leadsToLoss((x,y)):
+    return
+
+'''
   '@param y - integer reresenting column of gameBoard
   '@param gameBoard - matrix representing game grid
   '@return first playable row in column 'y' or -1 if 'y' is full

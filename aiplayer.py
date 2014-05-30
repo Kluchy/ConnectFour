@@ -123,17 +123,12 @@ def randomMovePlusPlus(gameBoard, playerTurn):
     else:
         return move,0
     
-'''
-  '@return true if slot above does not yield to opponent win
-  '@caller bestLocalMove, lookAheadOnePlus
-  '''
-def isSafeToPlay((x,y), opponentScores, gameBoard):
-    return opponentScores[x-1,y] < 7 and aif.isPlayable( (x,y), gameBoard )
 
 '''
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best local move as determiend by our formula, None otherwise
+  '@spec formula: best slot based on scoreBoard
   '@calling aif.scoreBoard, aif.isPlayable
   '@caller bestLocalMovePlus, gamePlay
   '''
@@ -144,7 +139,7 @@ def bestLocalMove(gameBoard, playerTurn):
     for score in sorted(candidateSlots.keys(), reverse=True):
         nextBests= candidateSlots[score]
         for x,y,player in nextBests:
-            if isSafeToPlay((x,y), yourScores, gameBoard):
+            if aif.isSafeToPlay((x,y), yourScores, gameBoard):
                 return x,y
             else:
                 #print "CANNOT PLAY AT ", x, y,"-----------------------------------"
@@ -178,6 +173,7 @@ def bestLocalMovePlus(gameBoard, playerTurn):
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
+  '@spec formula: best board based on isBetterState
   '@calling bestLocalMovePlus, aif.isBetterState, aif.getValidMoves
   '@caller gamePlay
   '''
@@ -209,6 +205,7 @@ def lookAheadOne(gameBoard, playerTurn):
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on our formula and two look aheads, or random if cannot determine the best one
+  '@spec formula: best board based on isBetterState
   '@calling lookAheadOne, aif.getValidMoves, aif.getOpponent, aif.isBetterState
   '@caller lookAheadThrice
   '''
@@ -251,6 +248,7 @@ def lookAheadTwice(gameBoard, playerTurn):
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on our formula and two look aheads, or random if cannot determine the best one
+  '@spec formula: best board based on isBetterState
   '@calling lookAheadOne, lookAheadTwice, aif.getValidMoves, aif.getOpponent, aif.isBetterState
   '@caller gamePlay
   '''
@@ -297,8 +295,9 @@ def lookAheadThrice(gameBoard, playerTurn):
 '''
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
-  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
-  '@calling bestLocalMovePlus, aif.getValidMoves
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one
+  '@spec formula: best board based on isSafeToPlay and numb sequentialCells (3)
+  '@calling bestLocalMovePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent, glf.getSequentialCellsPlus, aif.isSafeToPlay
   '@caller gamePlay
   '''
 def lookAheadOnePlus(gameBoard, playerTurn):
@@ -308,8 +307,8 @@ def lookAheadOnePlus(gameBoard, playerTurn):
     bestMove, isBlockOrWin= bestLocalMovePlus(gameBoard, playerTurn)
     x,y= bestMove
     #score board for this player and opponent
-    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
-    if not isSafeToPlay((x,y), yourScores, gameBoard):
+    myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
         #CAN USE THIS TO PREVENT CONNECT FOUR TRAPS
         print "BEST MOVE IS A LOSS?!?!?!"
     if isBlockOrWin:
@@ -338,7 +337,7 @@ def lookAheadOnePlus(gameBoard, playerTurn):
         print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
         #if len(newWinOpportunities) > len(oldWinOpportunities):
         myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
-        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+        if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
             print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
@@ -355,7 +354,8 @@ def lookAheadOnePlus(gameBoard, playerTurn):
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
-  '@calling lookAheadOnePlus, aif.getValidMoves
+  '@spec formula: best board based on is playable and sequentiallCells (3)
+  '@calling lookAheadOnePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent, glf.getSequentialCellsPlus, aif.isSafeToPlay
   '@caller gamePlay
   '''
 def lookAheadTwicePlus(gameBoard, playerTurn):
@@ -365,8 +365,8 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
     bestMove, isBlockOrWin= lookAheadOnePlus(gameBoard, playerTurn)
     x,y= bestMove
     #score board for this player and opponent
-    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
-    if not isSafeToPlay((x,y), yourScores, gameBoard):
+    myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
         print "lookAheadTwicePlus: -- BEST MOVE IS A LOSS?!?!?!"
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
@@ -399,7 +399,7 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
         print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
         #if len(newWinOpportunities) > len(oldWinOpportunities):
         myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
-        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+        if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
         #if len(newWinOpportunities) > len(oldWinOpportunities):
             print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
             bestMove= (x,y)
@@ -415,8 +415,9 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
 '''
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
-  '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
-  '@calling lookAheadOnePlus, aif.getValidMoves
+  '@return best move based on our formula and one look ahead, or random if cannot determine the best one
+  '@spec formula: best board based on isPlayable and number of sequentialCells (4) 
+  '@calling lookAheadTwicePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent, glf.getSequentialCellsPlus, aif.isSafeToPlay
   '@caller gamePlay
   '''
 def lookAheadThricePlus(gameBoard, playerTurn):
@@ -426,8 +427,8 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     bestMove, isBlockOrWin= lookAheadTwicePlus(gameBoard, playerTurn)
     x,y= bestMove
     #score board for this player and opponent
-    myScores, yourScores, candidateSlots= aif.scoreBoard(gameBoard, playerTurn)
-    if not isSafeToPlay((x,y), yourScores, gameBoard):
+    myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
+    if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
         print "lookAheadThricePlus: -- BEST MOVE IS A LOSS?!?!?!"
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
@@ -456,20 +457,20 @@ def lookAheadThricePlus(gameBoard, playerTurn):
         myMove, _= lookAheadTwicePlus(newBoard, playerTurn)
         newBoard[myMove]= playerTurn
         
-        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 3 )
+        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 4 )
         oldWinOpportunities= oldSequentialCells[playerTurn]
         oldLoseOpportunities= oldSequentialCells[opponentTurn]
-        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
+        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
         newWinOpportunities= newSequentialCells[playerTurn]
         newLoseOpportunities= newSequentialCells[opponentTurn]
         #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-        print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
-        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+        print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
+        print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
         #if len(newWinOpportunities) > len(oldWinOpportunities):
         myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
-        if isSafeToPlay((x,y), yourScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+        if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
         #if len(newWinOpportunities) > len(oldWinOpportunities):
-            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+            print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
         '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
