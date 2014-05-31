@@ -355,7 +355,8 @@ def lookAheadOnePlus(gameBoard, playerTurn):
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
   '@spec formula: best board based on is playable and sequentiallCells (3)
-  '@calling lookAheadOnePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent, glf.getSequentialCellsPlus, aif.isSafeToPlay
+  '@calling lookAheadOnePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent,
+            glf.getSequentialCellsPlus, aif.isSafeToPlay, aif.isSafeToPlayPlus, aif.preventTrapPlus          
   '@caller gamePlay
   '''
 def lookAheadTwicePlus(gameBoard, playerTurn):
@@ -387,7 +388,7 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
         print "flag flagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflag ", t
         if t == 1:
             print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
-            print slot
+            print s
             return s, 2
         elif t == -1:
             trapFlag= t
@@ -419,7 +420,7 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
             opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
             newBoard[opponentMove]= opponentTurn
             if trapFlag == -1 and bestMove == slot and (x,y) != slot and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
-                print "REPLACING BAD BEST MOVE LEADING TO TRAP WITH ", x,y
+                print "REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
                 bestMove= (x,y)
                 bestBoard= newBoard
                 trapFlag= 0

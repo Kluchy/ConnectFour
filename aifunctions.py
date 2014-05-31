@@ -397,6 +397,7 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
     possibleLosses= []
     traps= []
     trapFound= False
+    possibleBadMoves= py.zeros((0,0))
     yourOrScores, myOrScores, orCandidateSlots= scoreBoard(originalBoard, opponentTurn)
     yourFScores, myFScores, futureCandidateSlots= scoreBoard(futureBoard, opponentTurn)
     for score in futureCandidateSlots.keys():
@@ -424,6 +425,8 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
                             if isTrap(pos, pos2, originalBoard):
                                 traps.append(  [ ( (x,y),pos ),( (slotX,slotY),pos2 ) ] )
                                 trapFound= True
+                                possibleBadMoves= py.append( possibleBadMoves, pos )
+                                possibleBadMoves= py.append( possibleBadMoves, pos2 )
                                 #break
                         possibleLosses.append( ((slotX,slotY), pos2) )
 
@@ -469,7 +472,14 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
                     print "checking for prevention block: ", row[0], row[1]
                     if isSafeToPlayPlus( (row[0],row[1]), playerTurn, originalBoard):
                         return 1, (row[0],row[1])
-        return -1, myMove
+        #before returning, check if myMove is involved in any traps
+        #how to check if move involved in trap? 
+        #1----if removing it from futureBoard does not change numTraps found
+        possibleBadMoves= py.reshape(possibleBadMoves, (len(possibleBadMoves)/2,2))
+        for row in possibleBadMoves:
+            if (myX-1, myY) == (row[0], row[1]):
+                return -1, myMove
+        return 0, myMove
         '''if isPlayable(opponentMove, originalBoard):
             #then can bprevent trap by playing where opponent would have played
             return 1, opponentMove
