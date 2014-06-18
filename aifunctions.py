@@ -566,6 +566,84 @@ def getValidMoves(gameBoard):
                 break
     return validMoves
 
+'''
+  '''
+def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTurn  ):
+
+    numPlayerIDs= 0;
+    winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) );
+
+    #directions used for vector manipulations.
+    directions= py.array( [ [-1, 1], [0, 1], [1, 1] ] );
+
+
+    numrows,numcolumns= py.shape(gameBoard);
+    lastMoveRow= x #y;
+    lastMoveColumn= y #x;
+    playerID= playerTurn;
+    solutionFound= False;
+    
+    #for direct=1:4
+    direct= 0;
+    while not solutionFound and direct < 3:
+        rowdirection= directions[direct,0]
+        columndirection= directions[direct, 1]
+    #for each possible direction (vertical, horizontal, right and left diagonal), consider the 'sequentialPositionsNeeded' arrangements
+    #for p= (-sequentialPositionsNeeded+1):0
+        p= -sequentialPositionsNeeded+1
+        while not solutionFound and p <= 0:
+            #yieldsWin= false;
+            #if solution not found and range under consideration is within bounds.
+            if not glf.isRangeOutOfBounds(lastMoveRow,lastMoveColumn,rowdirection,columndirection,p) \
+                and  not glf.isRangeOutOfBounds(lastMoveRow,lastMoveColumn,rowdirection,columndirection,p+sequentialPositionsNeeded-1):
+                yieldsWin= True;
+                for iD in range( p, (p+sequentialPositionsNeeded) ):
+                #check the next cell within the 'sequentialPositionsNeeded' sequence and see if it equals the original center/playerID under consdieration.
+                    cell= gameBoard[lastMoveRow + iD*rowdirection, lastMoveColumn + iD*columndirection]
+                    if  cell != playerID and cell != 0:
+                        yieldsWin= False;
+                        numPlayerIDs= 0
+                    else:
+                        winningPositions[iD-p, :]= [lastMoveRow + iD*rowdirection, lastMoveColumn + iD*columndirection];
+                        if cell == playerID:
+                            numPlayerIDs+=1
+
+                if yieldsWin:
+                    solutionFound= True;
+                    #numPlayerIDs= playerID;
+                    #update winningPositions
+                    for resultRow in range( p, (p+sequentialPositionsNeeded) ):
+                        winningPositions[resultRow-p, :]= [lastMoveRow + resultRow*rowdirection, lastMoveColumn + resultRow*columndirection]
+                    return solutionFound, numPlayerIDs, winningPositions, directions[direct]
+                else:
+                        winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) )
+
+            p= p + 1;  
+        direct= direct + 1
+    return False, -1, 0, []
+
+'''
+  '@param gameBoard - matrix representing game grid
+  '@param validMoves - list of coordinates  that are valid moves for the current turn
+  '@param playerTurn - current player
+  '@return validMoves without slots that cannot contribute to a future win for playerTurn
+  '''
+def uselessSlotFilter(gameBoard, validMoves, playerTurn):
+    filteredMoves= []
+    for (x,y) in validMoves:
+        #get new sequentialCells to determine free spaces around this slot
+        isPossibleWin, numPlayerIDs, pos, winningDirection= moveYieldsPossibleWin( gameBoard, 4, (x,y), playerTurn )
+        #if x y has at least one chance of turning into a win, add to list.
+        if isPossibleWin:
+            filteredMoves.append( ( x, y ) )
+            
+    if len(filteredMoves) == 0:
+        print "uselessSlotFilter --- no good attacking positions"
+        return validMoves
+    else:
+        print "uselessSlotFilter --- attacking positions: ", filteredMoves
+        return filteredMoves
+    
 
 '''#testing randomMove
 b= py.zeros((6,7))
@@ -580,7 +658,7 @@ b[3,5]= 1
 b[4,5]= 2
 b[4,4]= 1'''
 
-c= py.zeros((6,7))
+'''c= py.zeros((6,7))
 c[5,4:7]= 1
 c[2:5,6]=2
 c[5,3]= 2
@@ -597,7 +675,7 @@ c[2,2:4]= 1
 c2[2,2]= 1
 c2[3,3]= 0
 res= preventTrap( c2, (3,3), (2,3), c, 2)
-resp= preventTrapPlus( c2, (3,3), (2,3), c, 2)
+resp= preventTrapPlus( c2, (3,3), (2,3), c, 2)'''
 
 #cell= randomMovePlusPlus(b)
 #valids= getValidMoves(b)

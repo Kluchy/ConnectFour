@@ -565,7 +565,24 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     if trapFlag == -1 and bestMove == slot:
         print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
     return bestMove, isBlockOrWin
+
+########################################### START OFFENSIVE PLAYERS ###############################################
+
+def randomOffense(gameBoard, playerTurn):
+    move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
+    if not isRandom:
+        print "RandomOffense --- blocking"
+        return move, 1
     
+    validMoves= aif.getValidMoves( gameBoard )
+    validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
+    choice= random.randint( 0, len( validMoves ) - 1 )
+    print "RandomOffense --- attacking"
+    return validMoves[choice], 0
+
+'''b= py.zeros((6,7))
+(x,y),z= randomOffense(b, 1)'''
+
 '''b= py.zeros((6,7))
 b[5,4:7]= 1
 b[2:5,6]=2
