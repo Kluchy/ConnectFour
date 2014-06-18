@@ -280,6 +280,13 @@ def isPlayable( (x,y), gameBoard ):
 def isSafeToPlay((x,y), opponentScores, gameBoard):
     return opponentScores[x-1,y] < 7 and isPlayable( (x,y), gameBoard )
 
+'''
+  '@param (x,y) - coordinates of target slot
+  '@param playerTurn - player about to make a move
+  '@gameBoard - board state under consideration
+  '@calling getOpponent
+  '@caller 
+  '''
 def isSafeToPlayPlus( (x,y), playerTurn, gameBoard):
     temp=py.copy(gameBoard)
     opponentTurn= getOpponent(playerTurn)
@@ -294,7 +301,22 @@ def isSafeToPlayPlus( (x,y), playerTurn, gameBoard):
   '''
 def leadsToLoss((x,y)):
     return
-    
+
+'''
+  '@param originalBoard - initial state of board before applying myMove and opponentMove
+  '@param myMove - move I want to make
+  '@param opponentMove - move I Think opponent will make
+  '@param futureBoard - new sate of board after applying myMove and opponentMove
+  '@param playerTurn - player doing this analysis (so from their perspective
+  @calling getOpponent, glf.moveYieldsWin, scoreBoard
+  '@caller lookAheadTwicePlus
+  '@return (flag, move) where: flag=1 means "play at 'move' to disrupt trap
+                                                flag=-1 means "do not play at myMove to avoid activating trap
+                                                flag=-2 means "there was a trap but not caused by myMove or opponentMove (shouldnt happen...)
+                                                flag=0 means "there is no trap
+                                                
+   '@note Something was slightly wrong here, so use preventTrapPlus
+  '''
 def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
     #if futureoard has a trap, find missing slot that will lead to trap and play there.
     #return  flag and that position if it exists and it's possible to play there now. 
@@ -359,6 +381,12 @@ def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
     else:
         return 0, myMove
 
+'''
+  '@param pos1,pos2 - two slots involved in two distinct winning opportunities
+  '@param originalBoard - current state of gameBoard
+  '@return true if either of pos1 pos2 is playable and the non-playable one depends on the other, false otherwise
+  '@caller preventTrapPlus
+  '''
 def isTrap(pos1, pos2, originalBoard):
     for row1 in pos1:
         for row2 in pos2:
@@ -388,10 +416,24 @@ def isTrap(pos1, pos2, originalBoard):
                 pass
     return False
     
+'''
+  '@param originalBoard - initial state of board before applying myMove and opponentMove
+  '@param myMove - move I want to make
+  '@param opponentMove - move I Think opponent will make
+  '@param futureBoard - new sate of board after applying myMove and opponentMove
+  '@param playerTurn - player doing this analysis (so from their perspective
+  @calling getOpponent, glf.moveYieldsWin, scoreBoard, isTrap
+  '@caller lookAheadTwicePlus
+  '@return (flag, move) where: flag=1 means "play at 'move' to disrupt trap
+                                                flag=-1 means "do not play at myMove to avoid activating trap
+                                                flag=0 means "there is no trap
+                                                
+   '@note logic fix from preventTrap
+  '''
 def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
     #if futureoard has a trap, find missing slot that will lead to trap and play there.
     #return  flag and that position if it exists and it's possible to play there now. 
-    print "IN"
+    #print "IN"
     #if exists but not of them are playable yet, return flag and (-1,-1)
     opponentTurn= getOpponent(playerTurn)
     possibleLosses= []

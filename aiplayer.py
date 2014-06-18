@@ -472,11 +472,33 @@ def lookAheadThricePlus(gameBoard, playerTurn):
         #there cannot be a better play than a block or a win
         print "lookAheadThricePlus: --- FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
+    elif isBlockOrWin == 2:
+        print "PREVENTION WORKS WITH LOOKAHEADTHRICEPLUS!!!!!!"
+        return bestMove, 2
 
     bestBoard= py.copy(gameBoard)
     bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
-    #get best move for opponent
+    trapFlag= 0
+    slot= (-1,-1)
     opponentTurn= aif.getOpponent(playerTurn)
+    opponentPossibleMoves= aif.getValidMoves(bestBoard)
+    for x,y in opponentPossibleMoves:
+        print" opoonent move: ", x,y
+        temp= py.copy(bestBoard)
+        temp[x,y]= opponentTurn
+        t, s= aif.preventTrapPlus(gameBoard,bestMove, (x,y), temp, playerTurn)
+        print "flag flagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflag ", t
+        if t == 1:
+            print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTHRICEPLUS ----------------------------"
+            print s
+            return s, 2
+        elif t == -1:
+            trapFlag= t
+            slot= s
+            break
+        elif t == 0:
+            pass
+    #get best move for opponent
     yourBestMove, _= lookAheadTwicePlus(bestBoard, opponentTurn)
     bestBoard[yourBestMove]= opponentTurn
     
@@ -485,38 +507,63 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     
     #find the best play that is neither a block or a win
     for x,y in possibleMoves:
-        #play move
-        newBoard= py.copy(gameBoard)
-        newBoard[x,y]= playerTurn
-        #get opponent move
-        opponentMove, _= lookAheadTwicePlus(gameBoard, opponentTurn)
-        newBoard[opponentMove]= opponentTurn
-        #get my next best move based on this new state
-        myMove, _= lookAheadTwicePlus(newBoard, playerTurn)
-        newBoard[myMove]= playerTurn
-        
-        oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 4 )
-        oldWinOpportunities= oldSequentialCells[playerTurn]
-        oldLoseOpportunities= oldSequentialCells[opponentTurn]
-        newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
-        newWinOpportunities= newSequentialCells[playerTurn]
-        newLoseOpportunities= newSequentialCells[opponentTurn]
-        #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-        print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
-        print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
-        #if len(newWinOpportunities) > len(oldWinOpportunities):
-        myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
-        if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
-        #if len(newWinOpportunities) > len(oldWinOpportunities):
-            print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
-            bestMove= (x,y)
-            bestBoard= newBoard
-        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-        if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
-            bestMove= (x,y)
-            bestBoard= newBoard'''
+        if (x,y) == slot:
+            print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
+            pass
+        else:
+            #play move
+            newBoard= py.copy(gameBoard)
+            newBoard[x,y]= playerTurn
+            newBoardAfterMyFirstTurn= py.copy(newBoard)
+            #get opponent move
+            opponentMove, _= lookAheadTwicePlus(gameBoard, opponentTurn)
+            newBoard[opponentMove]= opponentTurn
+            flag2,slot2= aif.preventTrapPlus(gameBoard, (x,y), opponentMove, newBoard, playerTurn)
+            if trapFlag == -1 and flag2 != -1 and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
+                print "ThricePlus: REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
+                bestMove= (x,y)
+                bestBoard= newBoard
+                trapFlag= 0
+            #get my next best move based on this new state
+            #TODO if final state has trap or is loss, discard this original move completely. If not, move on to compare this state to the best state seen.
+            #TODO check if no traps for opponent but trap for self, then play there
+            myMove, _= lookAheadTwicePlus(newBoard, playerTurn)
+            newBoard[myMove]= playerTurn
+            flag3,slot3= aif.preventTrapPlus(newBoardAfterMyFirstTurn, opponentMove, myMove, newBoard, opponentTurn)
+            if flag3 == 1 and aif.isSafeToPlayPlus( slot3, playerTurn, gameBoard ):
+                #Trap already active in our favor, use it!
+                print "Trap already active in our favor, use it! Trap already active in our favor, use it! Trap already active in our favor, use it! Trap already active in our favor, use it!"
+                return slot3
+            if flag3 == -1 and aif.isSafeToPlayPlus( slot3, playerTurn, gameBoard ):
+                #opponent made a move that activated the trap: consider our move that led to it as a valid place to play
+                pass
+            if flag2== -1:
+                pass
+            else:
+                oldSequentialCells= glf.getSequentialCellsPlus( bestBoard, 4 )
+                oldWinOpportunities= oldSequentialCells[playerTurn]
+                oldLoseOpportunities= oldSequentialCells[opponentTurn]
+                newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
+                newWinOpportunities= newSequentialCells[playerTurn]
+                newLoseOpportunities= newSequentialCells[opponentTurn]
+                #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
+                print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
+                print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+                #if len(newWinOpportunities) > len(oldWinOpportunities):
+                myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
+                if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
+                #if len(newWinOpportunities) > len(oldWinOpportunities):
+                    print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
+                    bestMove= (x,y)
+                    bestBoard= newBoard
+                '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
+                if isNewBetter == 1:
+                    print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+                    bestMove= (x,y)
+                    bestBoard= newBoard'''
     #return move leading to that state
+    if trapFlag == -1 and bestMove == slot:
+        print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
     return bestMove, isBlockOrWin
     
 '''b= py.zeros((6,7))
