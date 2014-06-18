@@ -572,13 +572,51 @@ def randomOffense(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
     if not isRandom:
         print "RandomOffense --- blocking"
+        return move, not isRandom
+        
+    validMoves= aif.getValidMoves( gameBoard )
+    filterWorked, validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
+    if filterWorked:
+        #choose move with higher number
+        move= (-1,-1)
+        bestVal= -1
+        for (x,y,value) in validMoves:
+            if value > bestVal:
+                move= (x,y)
+                bestVal= value
+        return move, not isRandom
+    #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
+    return move, not isRandom
+    '''choice= random.randint( 0, len( validMoves ) - 1 )
+    print "RandomOffense --- attacking"
+    return validMoves[choice], 0'''
+
+def randomOffenseWithTwicePlus(gameBoard, playerTurn):
+    move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
+    if not isRandom:
+        print "RandomOffense --- blocking"
         return move, 1
     
+    move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
+    if isBlockOrWin == 2 or isBlockOrWin:
+        return move, isBlockOrWin
+        
     validMoves= aif.getValidMoves( gameBoard )
-    validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
-    choice= random.randint( 0, len( validMoves ) - 1 )
+    filterWorked, validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
+    if filterWorked:
+        #choose move with higher number
+        #move= (-1,-1)
+        bestVal= -1
+        for (x,y,value) in validMoves:
+            if value > 1 and value > bestVal:
+                move= (x,y)
+                bestVal= value
+        return move, 0
+    #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
+    return move, 0
+    '''choice= random.randint( 0, len( validMoves ) - 1 )
     print "RandomOffense --- attacking"
-    return validMoves[choice], 0
+    return validMoves[choice], 0'''
 
 '''b= py.zeros((6,7))
 (x,y),z= randomOffense(b, 1)'''

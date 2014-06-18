@@ -569,9 +569,9 @@ def getValidMoves(gameBoard):
 '''
   '''
 def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTurn  ):
-
-    numPlayerIDs= 0;
-    winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) );
+    bestNumPlayerIDs= -1
+    bestWinningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) )
+    bestDirection= []
 
     #directions used for vector manipulations.
     directions= py.array( [ [-1, 1], [0, 1], [1, 1] ] );
@@ -586,6 +586,8 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
     #for direct=1:4
     direct= 0;
     while not solutionFound and direct < 3:
+        numPlayerIDs= 0;
+        winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) )
         rowdirection= directions[direct,0]
         columndirection= directions[direct, 1]
     #for each possible direction (vertical, horizontal, right and left diagonal), consider the 'sequentialPositionsNeeded' arrangements
@@ -612,15 +614,18 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
                     solutionFound= True;
                     #numPlayerIDs= playerID;
                     #update winningPositions
-                    for resultRow in range( p, (p+sequentialPositionsNeeded) ):
-                        winningPositions[resultRow-p, :]= [lastMoveRow + resultRow*rowdirection, lastMoveColumn + resultRow*columndirection]
-                    return solutionFound, numPlayerIDs, winningPositions, directions[direct]
+                    if numPlayerIDs > bestNumPlayerIDs:
+                        bestNumPlayerIDs= numPlayerIDs
+                        bestDirection= directions[direct]
+                        for resultRow in range( p, (p+sequentialPositionsNeeded) ):
+                            bestWinningPositions[resultRow-p, :]= [lastMoveRow + resultRow*rowdirection, lastMoveColumn + resultRow*columndirection]
+                    #return solutionFound, numPlayerIDs, winningPositions, directions[direct]
                 else:
                         winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) )
 
             p= p + 1;  
         direct= direct + 1
-    return False, -1, 0, []
+    return solutionFound, bestNumPlayerIDs, bestWinningPositions, bestDirection
 
 '''
   '@param gameBoard - matrix representing game grid
@@ -635,14 +640,14 @@ def uselessSlotFilter(gameBoard, validMoves, playerTurn):
         isPossibleWin, numPlayerIDs, pos, winningDirection= moveYieldsPossibleWin( gameBoard, 4, (x,y), playerTurn )
         #if x y has at least one chance of turning into a win, add to list.
         if isPossibleWin:
-            filteredMoves.append( ( x, y ) )
+            filteredMoves.append( ( x, y, numPlayerIDs ) )
             
     if len(filteredMoves) == 0:
         print "uselessSlotFilter --- no good attacking positions"
-        return validMoves
+        return 0, validMoves
     else:
         print "uselessSlotFilter --- attacking positions: ", filteredMoves
-        return filteredMoves
+        return 1, filteredMoves
     
 
 '''#testing randomMove

@@ -100,6 +100,9 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
         elif playerModes[playerTurn] == "randomOffense":
                 (matrixX,matrixY),isBlockOrwin= ai.randomOffense(gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "randomOffenseWithTwicePlus":
+                (matrixX,matrixY),isBlockOrwin= ai.randomOffenseWithTwicePlus(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         print "-------------------------------------------------End Turn---------------------------------------------"
         if moveValid:
             res,winner,pos= glf.moveYieldsWin( gameBoard, sequentialPositionsNeeded, (matrixX,matrixY), playerColor )
@@ -121,7 +124,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","randomOffense",1)
+gamePlay("Human","randomOffenseWithTwicePlus",1)
 #gamePlay("lookAheadTwicePlus","lookAheadOnePlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
