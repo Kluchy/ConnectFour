@@ -574,7 +574,7 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
     bestDirection= []
 
     #directions used for vector manipulations.
-    directions= py.array( [ [-1, 1], [0, 1], [1, 1] ] );
+    directions= py.array( [ [-1, 1], [0, 1], [1, 1], [1, -1], [0, -1], [-1,-1] ] );
 
 
     numrows,numcolumns= py.shape(gameBoard);
@@ -585,7 +585,7 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
     
     #for direct=1:4
     direct= 0;
-    while not solutionFound and direct < 3:
+    while direct < 6:
         numPlayerIDs= 0;
         winningPositions= py.zeros( ( sequentialPositionsNeeded, 2 ) )
         rowdirection= directions[direct,0]
@@ -593,7 +593,7 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
     #for each possible direction (vertical, horizontal, right and left diagonal), consider the 'sequentialPositionsNeeded' arrangements
     #for p= (-sequentialPositionsNeeded+1):0
         p= -sequentialPositionsNeeded+1
-        while not solutionFound and p <= 0:
+        while p <= 0:
             #yieldsWin= false;
             #if solution not found and range under consideration is within bounds.
             if not glf.isRangeOutOfBounds(lastMoveRow,lastMoveColumn,rowdirection,columndirection,p) \

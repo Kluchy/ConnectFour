@@ -592,10 +592,10 @@ def randomOffense(gameBoard, playerTurn):
     return validMoves[choice], 0'''
 
 def randomOffenseWithTwicePlus(gameBoard, playerTurn):
-    move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
+    '''move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
     if not isRandom:
         print "RandomOffense --- blocking"
-        return move, 1
+        return move, 1'''
     
     move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     if isBlockOrWin == 2 or isBlockOrWin:
