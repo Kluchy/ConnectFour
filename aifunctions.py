@@ -567,6 +567,19 @@ def getValidMoves(gameBoard):
     return validMoves
 
 '''
+  '@param gameBoard - matrix representing game grid
+  '@param sequentialPositionsNeeded - number of slots in a chain to consider
+  '@param (x,y) - coordinates of target first slot in gameBoard
+  '@param playerTurn - player whose turn it is
+  '@spec look for sequentialPositionsNeeded of slots filed with 0s or playerTurn's.
+         Return the one with the highest numPlayerIDs in their corresponding chain
+  '@return solutionFound, bestNumPlayerIDs, bestWinningPositions, bestDirection
+           solutionFound - flag for determinging if at least one solution wsa found
+           bestNumPlayerIDs - number of playerTurn's filled slots in winning chain
+           bestWinningPositions - the coordinates corresponding to the sequentialPositionsNeeded found as solution
+           bestDirection - the direction (horizontal or diagonal) in which the sequentialPositionsNeeded slots lie
+  '@calling glf.isRangeOutOfBounds
+  '@caller uselessSlotFilter
   '''
 def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTurn  ):
     bestNumPlayerIDs= -1
@@ -632,6 +645,8 @@ def moveYieldsPossibleWin( gameBoard, sequentialPositionsNeeded, (x,y), playerTu
   '@param validMoves - list of coordinates  that are valid moves for the current turn
   '@param playerTurn - current player
   '@return validMoves without slots that cannot contribute to a future win for playerTurn
+  '@calling moveYieldsPossibleWin
+  '@caller ai.randomOffense, ai.randomOffenseWithTwicePlus
   '''
 def uselessSlotFilter(gameBoard, validMoves, playerTurn):
     filteredMoves= []

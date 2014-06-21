@@ -568,6 +568,14 @@ def lookAheadThricePlus(gameBoard, playerTurn):
 
 ########################################### START OFFENSIVE PLAYERS ###############################################
 
+'''
+  '@param gameBoard - matrix representing game grid
+  '@param playerTurn - player making the next move:the caller
+  '@return best offensive move to make according to our formula, or random if cannot find one
+  '@spec formula: make chains of coins in order to get closer to 4 in a row
+  '@calling randomMovePlusPlus, aif.getValidMoves, aif.uselessSlotFilter, 
+  '@caller gameplay
+  '''
 def randomOffense(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
     if not isRandom:
@@ -591,12 +599,15 @@ def randomOffense(gameBoard, playerTurn):
     print "RandomOffense --- attacking"
     return validMoves[choice], 0'''
 
+'''
+  '@param gameBoard - matrix representing game grid
+  '@param playerTurn - player making the next move:the caller
+  '@return best offensive move to make according to our formula, or best defensive move from lookAheadTwicePlus
+  '@spec formula: make chains of coins in order to get closer to 4 in a row
+  '@calling lookAheadTwicePlus, aif.getValidMoves, aif.uselessSlotFilter
+  '@caller gameplay
+  '''
 def randomOffenseWithTwicePlus(gameBoard, playerTurn):
-    '''move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
-    if not isRandom:
-        print "RandomOffense --- blocking"
-        return move, 1'''
-    
     move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     if isBlockOrWin == 2 or isBlockOrWin:
         return move, isBlockOrWin
@@ -614,9 +625,6 @@ def randomOffenseWithTwicePlus(gameBoard, playerTurn):
         return move, 0
     #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     return move, 0
-    '''choice= random.randint( 0, len( validMoves ) - 1 )
-    print "RandomOffense --- attacking"
-    return validMoves[choice], 0'''
 
 '''b= py.zeros((6,7))
 (x,y),z= randomOffense(b, 1)'''
