@@ -285,7 +285,7 @@ def isSafeToPlay((x,y), opponentScores, gameBoard):
   '@param playerTurn - player about to make a move
   '@gameBoard - board state under consideration
   '@calling getOpponent
-  '@caller 
+  '@caller functions in ai
   '''
 def isSafeToPlayPlus( (x,y), playerTurn, gameBoard):
     temp=py.copy(gameBoard)
@@ -451,14 +451,14 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
             for slot in loseSlots:
                 slotX,slotY,player= slot
                 if player != opponentTurn:
-                    print" ok"
+                    #print" ok"
                     pass
                 else:
                     print"this is for opponent"
                     temp= py.copy(futureBoard)
                     temp[slotX,slotY]= opponentTurn
                     isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
-                    print isLoss2
+                    #print isLoss2
                     if isLoss2:
                         #check if any pair seen thus far are actually part of a trap
                         for ((x,y),pos) in possibleLosses:
@@ -472,37 +472,6 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
                                 #break
                         possibleLosses.append( ((slotX,slotY), pos2) )
 
-                #if len(possibleLosses) > 1:
-                 #   trapFound= True
-                  #  break
-                '''elif yourFScores[slotX-1,slotY] >= 7:
-                    #this slot and the one above it form a trap
-                    temp= py.copy(futureBoard)
-                    temp[slotX-1,slotY]= opponentTurn
-                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX-1,slotY), 'r')
-                    temp[slotX-1,slotY]= 0
-                    temp[slotX,slotY]= opponentTurn
-                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
-                    if isLoss1 and isLoss2:
-                        trapFound= True
-                        print slotX, slotY, " and ", slotX-1,slotY 
-                        break
-                        
-                    #find sequentialPositions leading to a win with this slot
-                    #get playable moves on current board
-                    #play at a slot that is in intersection of sequentialPositions and playable moves
-                elif yourFScores[slotX+1,slotY] >= 7:
-                    #this slot and the one below it form a trap
-                    temp= py.copy(futureBoard)
-                    temp[slotX+1,slotY]= opponentTurn
-                    isLoss1, winner1, pos1= glf.moveYieldsWin(temp, 4, (slotX+1,slotY), 'r')
-                    temp[slotX+1,slotY]= 0
-                    temp[slotX,slotY]= opponentTurn
-                    isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
-                    if isLoss1 and isLoss2:
-                        trapFound= True
-                        print slotX, slotY, " and ", slotX+1,slotY
-                        break'''
                 #if slot not in possibleLosses:
                  #   possibleLosses.append(slot)
     if trapFound: 
@@ -534,6 +503,72 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
     else:
         return 0, myMove
 
+'''
+  '@param gameBoard - grid representing game
+  '@param isPossibleWin - true if 
+  '@calling getOpponent, isPlayable
+  '@caller blockSingleLineTrap
+  '''
+def isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirection, playerTurn ):
+    print "IN ISSINGLELINETRAP"
+    opponentTurn= getOpponent( playerTurn )
+    singleLineTraps= [ [0,0, opponentTurn, opponentTurn, 0], [0, opponentTurn, opponentTurn, 0, 0] ]                    
+    if not isPossibleWin or numPlayerIDs != 2:
+        print "IN ISSINGLELINETRAP --- not valid, so return False"
+        return False, None
+        #the two != numPlayerIDs must be playable
+    targetLine= []
+    for row in pos:
+        x,y= row
+        targetLine.append( gameBoard[x,y] )
+    if targetLine not in singleLineTraps:
+        print "IN ISSINGLELINETRAP --- not valid, so return False because does not match"
+        return False, None
+    if targetLine == singleLineTraps[0]:
+        #need first, second, and 5th to be playable
+        first= pos[0]
+        x1,y1= first[0], first[1]
+        second= pos[1]
+        x2,y2= second[0], second[1]
+        fifth= pos[4]
+        x5,y5= fifth[0], fifth[1]
+        if isPlayable( (x1,y1), gameBoard ) and isPlayable( (x2,y2), gameBoard ) and isPlayable( (x5,y5), gameBoard ):
+            return True, (x2,y2)
+        else:
+            return False, None
+    elif targetLine == singleLineTraps[1]:
+        #need first, 4th, and 5th to be playable
+        first= pos[0]
+        x1,y1= first[0], first[1]
+        fourth= pos[3]
+        x4,y4= fourth[0], fourth[1]
+        fifth= pos[4]
+        x5,y5= fifth[0], fifth[1]
+        if isPlayable( (x1,y1), gameBoard ) and isPlayable( (x4,y4), gameBoard ) and isPlayable( (x5,y5), gameBoard ):
+            return True, (x4,y4)
+        else:
+            return False, None
+    else:
+        return False, None
+    #TODO finish
+
+'''
+  '@param gameBoard - grid representing game
+  '@param playerturn - player making the analysis
+  '@caller randomOffenseWithTwicePlus, randomOffenseOneWithTwicePlus
+  '@calling getOpponent, isSingleLineTrap, moveYieldsPossibleWin
+  '''
+def blockSingleLineTrap(gameBoard, playerTurn):
+    opponentTurn= getOpponent( playerTurn )
+    #get new sequentialCells to determine free spaces around this slot
+    yourOrScores, myOrScores, orCandidateSlots= scoreBoard(gameBoard, opponentTurn)
+    validMoves= getValidMoves(gameBoard)
+    for (x,y) in validMoves:
+        isPossibleWin, numPlayerIDs, pos, winningDirection= moveYieldsPossibleWin( gameBoard, 5, (x,y), opponentTurn )
+        isTrap, blockingMove= isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirection, playerTurn )
+        if isTrap:
+            return 1, blockingMove
+    return 0, None
 
 '''
   '@param y - integer reresenting column of gameBoard

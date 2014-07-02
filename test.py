@@ -26,4 +26,4 @@ def battle(playerMode1, playerMode2):
         #time.sleep(3)
     print final
 #battle("BestLocalPlus", "lookAheadThricePlus")
-battle("lookAheadThricePlus", "lookAheadTwicePlus")
+battle("lookAheadTwicePlus", "randomOffenseWithTwicePlus")

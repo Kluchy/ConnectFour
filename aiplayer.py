@@ -431,8 +431,8 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
             newWinOpportunities= newSequentialCells[playerTurn]
             newLoseOpportunities= newSequentialCells[opponentTurn]
             #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-            print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
-            print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+            #print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
+            #print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
             #if len(newWinOpportunities) > len(oldWinOpportunities):
             myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
             if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
@@ -447,7 +447,8 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
                 bestBoard= newBoard'''
     #return move leading to that state
     if trapFlag == -1 and bestMove == slot:
-        print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
+        #print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
+        pass
     return bestMove, isBlockOrWin
     
 '''
@@ -604,13 +605,17 @@ def randomOffense(gameBoard, playerTurn):
   '@param playerTurn - player making the next move:the caller
   '@return best offensive move to make according to our formula, or best defensive move from lookAheadTwicePlus
   '@spec formula: make chains of coins in order to get closer to 4 in a row
-  '@calling lookAheadTwicePlus, aif.getValidMoves, aif.uselessSlotFilter
+  '@calling lookAheadTwicePlus, aif.getValidMoves, aif.uselessSlotFilter, aif.blockSingleLineTrap
   '@caller gameplay
   '''
 def randomOffenseWithTwicePlus(gameBoard, playerTurn):
     move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     if isBlockOrWin == 2 or isBlockOrWin:
         return move, isBlockOrWin
+        
+    isSingleLineTrap, blockingMove= aif.blockSingleLineTrap(gameBoard, playerTurn)
+    if isSingleLineTrap:
+        return blockingMove, isSingleLineTrap
         
     validMoves= aif.getValidMoves( gameBoard )
     filterWorked, validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
@@ -619,12 +624,44 @@ def randomOffenseWithTwicePlus(gameBoard, playerTurn):
         #move= (-1,-1)
         bestVal= -1
         for (x,y,value) in validMoves:
-            if value > 1 and value > bestVal:
+            if value > 1 and value > bestVal and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
                 move= (x,y)
                 bestVal= value
         return move, 0
     #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     return move, 0
+
+def randomOffenseOneWithTwicePlus( gameBoard, playerTurn ):
+    move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
+    if isBlockOrWin == 2 or isBlockOrWin:
+        return move, isBlockOrWin
+    
+    isSingleLineTrap, blockingMove= aif.blockSingleLineTrap(gameBoard, playerTurn)
+    if isSingleLineTrap:
+        return blockingMove, isSingleLineTrap
+    #consider all my possible moves
+    validMoves= aif.getValidMoves( gameBoard )
+    bestMove= move
+    bestNumPlayerIDs= -1
+    for (x,y) in validMoves:
+        #simulate this move, and assume opponent plays 'best' possible move.
+        #the best move from me is the one leaving the state with a higher
+        #sequence of my playerID as a valid win AFTER opponent's 'best' move
+        tempBoard= py.copy(gameBoard)
+        tempBoard[x,y]= playerTurn
+        opponentTurn= aif.getOpponent(playerTurn)
+        oppMove, _= lookAheadTwicePlus(tempBoard, opponentTurn)
+        tempBoard[oppMove]= opponentTurn
+        #get new valid moves and new uselessSlotFilter values. Compare with
+        #best seen thus far 
+        newValidMoves= aif.getValidMoves( tempBoard )
+        filterWorked, newValidMoves= aif.uselessSlotFilter( tempBoard, newValidMoves, playerTurn )
+        if filterWorked:
+            for (_,_,value) in newValidMoves:
+                if value > bestNumPlayerIDs:
+                    bestMove= (x,y)
+                    bestNumPlayerIDs= value
+    return bestMove, 0
 
 '''b= py.zeros((6,7))
 (x,y),z= randomOffense(b, 1)'''
