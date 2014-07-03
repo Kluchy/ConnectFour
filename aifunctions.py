@@ -550,7 +550,6 @@ def isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirect
             return False, None
     else:
         return False, None
-    #TODO finish
 
 '''
   '@param gameBoard - grid representing game
@@ -570,6 +569,31 @@ def blockSingleLineTrap(gameBoard, playerTurn):
             return 1, blockingMove
     return 0, None
 
+def blockTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
+    opponentTurn= getOpponent( playerTurn )
+    interBoard= py.copy( originalBoard )
+    interBoard[myMove]= playerTurn
+    winningChains= glf.getSequentialCellsPlus( interBoard, 4 )
+    opWins= winningChains[opponentTurn]
+    numOpWins= len( opWins )
+    
+    fwinningChains= glf.getSequentialCellsPlus( futureBoard, 4 )
+    fopWins= fwinningChains[opponentTurn]
+    fnumOpWins= len( fopWins )
+    
+    if fnumOpWins >= numOpWins + 2:
+        #then there was a trap.
+        #check if opponentMove is playable from originalBoard
+        if isPlayable( opponentMove, originalBoard ):
+            return 1, opponentMove
+        else:
+            #must have been made playable by myMove
+            return -1, myMove
+    else:
+        #appears to be no trap
+        return 0, myMove
+        
+    
 '''
   '@param y - integer reresenting column of gameBoard
   '@param gameBoard - matrix representing game grid
@@ -730,7 +754,16 @@ c[2,2:4]= 1
 c2[2,2]= 1
 c2[3,3]= 0
 res= preventTrap( c2, (3,3), (2,3), c, 2)
-resp= preventTrapPlus( c2, (3,3), (2,3), c, 2)'''
+resp= preventTrapPlus( c2, (3,3), (2,3), c, 2)
+resp2= blockTrap( c2, (3,3), (2,3), c, 2 )
+
+d= py.zeros((6,7))
+d[5,3]= 1
+d[5,2]= 1
+d2= py.copy( d )
+d2[5,4]= 1
+respd= preventTrapPlus( d, (0,0), (5,4), d2, 2 )
+respd2= blockTrap( d, (0,0), (5,4), d2, 2 )'''
 
 #cell= randomMovePlusPlus(b)
 #valids= getValidMoves(b)

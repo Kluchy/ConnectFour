@@ -292,7 +292,7 @@ def getSequentialCells( gameBoard, sequentialPositionsNeeded ):
   '@param gameBoard - backend matrix for game
   '@param sequentialPositionsNeeded - target number of coins in sequence
   '@return a set of 'sequentialPositionsNeeded of coins (minus 1) in sequence in gameBoard as a dictionary
-  '@caller ai.randomMovePlus2
+  '@caller ai.randomMovePlus2, aif.blockTrap, aif.scoreboard
   '@calling isRangeOutOfBounds2
   '''
 def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
