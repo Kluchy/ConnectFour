@@ -48,7 +48,7 @@ def blockOrWin(gameBoard, pos):
  '@param playerTurn - 1 or 2
  '@return scores of 'gameBoard' for myself and opponent, and candidate moves
  '@calling glf.getSequentialCellsPlus
- '@caller ai.getLocalMove
+ '@caller ai.getLocalMove, other AIs
  '''
 def scoreBoard(gameBoard, playerTurn):
     #2 black copies of board
@@ -243,6 +243,111 @@ def compare(gameBoard1, gameBoard2, playerTurn):
     else:
         return 0, score1, score2'''
     #return score1, score2
+
+'''
+  '@param gameBoard - matrix representing game grid's current state
+  '@spec score given gameBoard according to a linear combination of the following features:
+        2 -- board contains win or loss (consider number of such wins or losses as coefficient)
+        2 -- result of scoreBoard (how to use?)
+        1 -- the number of offensive plays (from moveYieldsPossibleWin)
+        2 -- the number of lose/win opportunities (from sequentialCellsPlus as used in lookAheadTwicePlus)
+          --
+  '@return value representing linear combination of above features
+  '@caller nextMove
+  '@calling scoreBoard, moveYieldsPossibleWin, uselessSlotFilter, getValidMoves,
+            glf.getSequentialCellsPlus, glf.getSequentialCells, getOpponent
+  '''
+def evalB( gameBoard, playerTurn ):
+    opponentTurn= getOpponent( playerTurn )
+    
+    #get whether board contains win or loss (or both)
+    allWins= glf.getSequentialCells( gameBoard, 4 )
+    wins= len( allWins[playerTurn] )
+    losses= len( allWins[opponentTurn] )
+    
+    #get results of scoreBoard
+    myScores, yourScores, candidateSlots= scoreBoard( gameBoard, playerTurn )
+    times= 2
+    tempPt= 0.0
+    tempOt= 0.0
+    for score in sorted(candidateSlots.keys(), reverse=True):
+        if times == 0:
+            break
+        nextBests= candidateSlots[score]
+        for x,y,player in nextBests:
+            if player == playerTurn:
+                #update partial score
+                tempPt+= score
+            else:
+                tempOt+= score
+        times-=1
+    
+    #get the number of offensive plays
+    offPlays= 0.0
+    validMoves= getValidMoves( gameBoard )
+    filterWorked, validMoves= uselessSlotFilter( gameBoard, validMoves, playerTurn )
+    if filterWorked:
+        offPlays= len(validMoves)
+        
+    #get the number of win/lose opportunities
+    sequentialCells= glf.getSequentialCellsPlus( gameBoard, 3 )
+    winOpportunities= sequentialCells[playerTurn]
+    loseOpportunities= sequentialCells[opponentTurn]
+    numWins= len(winOpportunities)
+    numLosses= len(loseOpportunities)
+
+    #calculate linear combination
+    value= wins * 1000 + losses * (-1000) + tempPt * 0.1 + tempOt * (-0.3) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.5)
+    return value
+    
+  
+'''
+  '@param startBoard - matrix representing game grid
+  '@param results - pointer to list to hold alternate gameBoards 
+  '@param playerTurn - player whose turn is being simulated
+  '@param numTurns - number of turns to be simulated
+  '@spec recursive function to simulate numTurns step starting form 'startBoard' with 'playerTurn'
+  '@return void - returns nothing, but uses pointer to 'results' list to return values
+  '@caller nextMove
+  '@calling getValidMoves
+  '''
+def simulate(startBoard, results, playerTurn, numTurns, move):
+    if numTurns == 0:
+        #return startBoard
+        results.append( (startBoard, move) )
+    else:
+        validMoves= getValidMoves( startBoard )
+        for (x,y) in validMoves:
+            nextBoard= py.copy(startBoard)
+            nextBoard[x,y]= playerTurn
+            if not move:
+                simulate( nextBoard, results, getOpponent(playerTurn), numTurns - 1, (x,y) )
+            else:
+                simulate( nextBoard, results, getOpponent(playerTurn), numTurns - 1, move )
+
+'''
+  '@param gameBoard - matrix representing game grid
+  '@param lookAheadTimes - number of moves to consider in analysis
+  '@param playerTurn - player doing the analysis
+  '@return move, final board, and corresponding evalB score based on analysis
+  '@calling simulate
+  '@caller ai.forwardEval
+  '''
+def nextMove( gameBoard, lookAheadTimes, playerTurn ):
+    finalBoards= []
+    simulate( gameBoard, finalBoards, playerTurn, lookAheadTimes, None )
+    #now, finalBoards contains a (board, move) pairs.
+    #find the best pair based on the eval function
+    bestMove= None
+    bestBoard= None
+    bestValue= -999999999
+    for board, move in finalBoards:
+        score= evalB( board, playerTurn )
+        if score > bestValue:
+            bestMove= move
+            bestBoard= board
+            bestValue= score
+    return bestMove, bestBoard, bestValue
 
 '''
   '@param(x,y) - coordinates to cell in gameBoard
@@ -510,7 +615,7 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
   '@caller blockSingleLineTrap
   '''
 def isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirection, playerTurn ):
-    print "IN ISSINGLELINETRAP"
+    #print "IN ISSINGLELINETRAP"
     opponentTurn= getOpponent( playerTurn )
     singleLineTraps= [ [0,0, opponentTurn, opponentTurn, 0], [0, opponentTurn, opponentTurn, 0, 0] ]                    
     if not isPossibleWin or numPlayerIDs != 2:
@@ -569,7 +674,83 @@ def blockSingleLineTrap(gameBoard, playerTurn):
             return 1, blockingMove
     return 0, None
 
+'''
+  '@param originalBoard
+  '@param myMove - my move under consideration
+  '@param opponentMove - opponentMove under consideration
+  '@param futureBoard - board with myMove and opponentMove playes
+  '@param playerTurn - player making the analysis
+  '@return flag (1,-1,0) and corresponding move to make (1) or avoid (-1).  0 means no trap detected
+  '@caller lookAheadTwicePlus, randomOffenseWithTwicePlus, randomOffenseOneWithTwicePlus
+  '@calling getOpponent, glf.getSequentiallCellsPlus
+  '@note rough fix to blockTrapFirst by playing near opponent move
+  '''
 def blockTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
+    numrows, numcolumns= py.shape(originalBoard)
+    opponentTurn= getOpponent( playerTurn )
+    interBoard= py.copy( originalBoard )
+    interBoard[myMove]= playerTurn
+    winningChains= glf.getSequentialCellsPlus( interBoard, 4 )
+    #print "winning Chains: " ,winningChains
+    opWins= winningChains[opponentTurn]
+    numOpWins= len( opWins )
+    
+    fwinningChains= glf.getSequentialCellsPlus( futureBoard, 4 )
+    fopWins= fwinningChains[opponentTurn]
+    print "fopWins: ", fopWins
+    fnumOpWins= len( fopWins )
+    
+    if fnumOpWins >= numOpWins + 2:
+        #then there was a trap.
+        
+        #get entries in fwinningChains that are new (i.e not in winningChains)
+        newOpPossibleWins= []
+        for pair in fopWins:
+            print "pair is: ", pair
+            posOfPair, directOfPair= pair
+            absent= True
+            for pos,direct in opWins:
+                if directOfPair == direct and posOfPair.tolist() == pos.tolist():
+                    absent= False
+            if absent:
+                newOpPossibleWins.append(pair)
+        #check that there are only 2 new possibilities
+        #assert len(newOpPossibleWins) == 2
+        
+        #go through the first 4
+        for posWin in newOpPossibleWins:
+            pos,direct= posWin
+            rowdirect,columndirect= direct
+            for row in pos:
+                x,y= row[0], row[1]
+                adjRow= x+rowdirect
+                adjCol= y+columndirect
+                if  adjRow < 6 and adjRow > 0 and adjCol < 7 and adjCol > 0 and isPlayable( (x,y), originalBoard ) and originalBoard[adjRow,adjCol] == opponentTurn:
+                    return 1, (x,y)
+        return -1, myMove
+            
+        '''#check if opponentMove is playable from originalBoard
+        if isPlayable( opponentMove, originalBoard ):
+            return 1, opponentMove
+        else:
+            #must have been made playable by myMove
+            return -1, myMove'''
+    else:
+        #appears to be no trap
+        return 0, myMove
+
+'''
+  '@param originalBoard
+  '@param myMove - my move under consideration
+  '@param opponentMove - opponentMove under consideration
+  '@param futureBoard - board with myMove and opponentMove playes
+  '@param playerTurn - player making the analysis
+  '@return flag (1,-1,0) and corresponding move to make (1) or avoid (-1).  0 means no trap detected
+  '@caller lookAheadTwicePlus, randomOffenseWithTwicePlus, randomOffenseOneWithTwicePlus
+  '@calling getOpponent, glf.getSequentiallCellsPlus
+  '@note problem with placement of move to block trap in single line trap. Tried fixing in blockTrap above
+  '''
+def blockTrapFirst(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
     opponentTurn= getOpponent( playerTurn )
     interBoard= py.copy( originalBoard )
     interBoard[myMove]= playerTurn
@@ -717,10 +898,10 @@ def uselessSlotFilter(gameBoard, validMoves, playerTurn):
             filteredMoves.append( ( x, y, numPlayerIDs ) )
             
     if len(filteredMoves) == 0:
-        print "uselessSlotFilter --- no good attacking positions"
+        #print "uselessSlotFilter --- no good attacking positions"
         return 0, validMoves
     else:
-        print "uselessSlotFilter --- attacking positions: ", filteredMoves
+        #print "uselessSlotFilter --- attacking positions: ", filteredMoves
         return 1, filteredMoves
     
 
@@ -764,6 +945,12 @@ d2= py.copy( d )
 d2[5,4]= 1
 respd= preventTrapPlus( d, (0,0), (5,4), d2, 2 )
 respd2= blockTrap( d, (0,0), (5,4), d2, 2 )'''
+
+'''res= []
+c= py.zeros((6,7))
+#simulate(c, res, 1, 6, None)
+move, board, value= nextMove( c, 4, 1 )
+print move, board, value'''
 
 #cell= randomMovePlusPlus(b)
 #valids= getValidMoves(b)
