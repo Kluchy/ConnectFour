@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Project Idea}{}% 1
+\BOOKMARK [1][-]{section.2}{Timeline}{}% 2
+\BOOKMARK [1][-]{section.3}{Code Structure \046 Implementation}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Game Logic \046 Design}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{AI Development}{section.3}% 5
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Board State Analysis}{subsection.3.2}% 6
+\BOOKMARK [3][-]{subsubsection.3.2.2}{'lookAhead' AIs - Defense}{subsection.3.2}% 7
+\BOOKMARK [3][-]{subsubsection.3.2.3}{randomOffense AIs - Offense}{subsection.3.2}% 8
+\BOOKMARK [2][-]{subsection.3.3}{Testing \046 Statistics}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.3.1}{user testing}{subsection.3.3}% 10
+\BOOKMARK [3][-]{subsubsection.3.3.2}{automated testing}{subsection.3.3}% 11

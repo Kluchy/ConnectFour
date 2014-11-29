@@ -287,6 +287,80 @@ def getSequentialCells( gameBoard, sequentialPositionsNeeded ):
 #end
 #here, there are no winners. winnerPlayerID is already 0.
     return sequentialCells
+    
+'''
+  '@param gameBoard - backend matrix for game
+  '@param sequentialPositionsNeeded - target number of coins in sequence
+  '@return a set of 'sequentialPositionsNeeded of coins in sequence in gameBoard as a dictionary
+  '@caller ai.randomMovePlus2
+  '@calling isRangeOutOfBounds2
+  '@spec like getSequentialCells, except does not consider vertical chains to avoid trivial players
+  '''
+def getSequentialCellsNoV( gameBoard, sequentialPositionsNeeded ):
+    winnerPlayerID= 0;
+    winningPositions= py.zeros((sequentialPositionsNeeded,2));
+    winningDirection= []
+    sequentialCells= {1:[],2:[]}
+    numrows,numcolumns= py.shape(gameBoard)
+    #directions used for vector manipulations.
+    directions= py.array([ [-1, 1], [0, 1], [1, 1] ] )
+    winnerFound= False;
+    #process each cell has endpoint of possible winning sequence.
+    row= 0
+    while not winnerFound and row < numrows:
+        column= 0
+        while not winnerFound and column < numcolumns:
+            #get value(i.e playerID) and coordinates of cell under consideration.
+            playerID= gameBoard[row,column]
+            if playerID != 0:
+                centerrow= row
+                centercolumn= column
+                direct= 0
+                while not winnerFound and direct < 3:
+                    rowdirection= directions[direct,0]
+                    columndirection= directions[direct, 1]
+                    isCenterWin= False
+                    #do nothing if out of bounds
+                    if not isRangeOutOfBounds2(centerrow,centercolumn,rowdirection,columndirection,sequentialPositionsNeeded):
+                        isCenterWin= True;
+                        #otherwise, check the next cell within the 'sequentialPositionsNeeded'
+                        #sequence and see if it equals the original center/playerID under consdieration.
+                        for iD in range( 0, sequentialPositionsNeeded ):          
+                            if gameBoard[centerrow + iD*rowdirection, centercolumn + iD*columndirection] != playerID:
+                                isCenterWin= False
+                            else:
+                                winningPositions[iD, :]= [centerrow + iD*rowdirection, centercolumn + iD*columndirection]
+
+                            #end
+                        #end
+                    #end
+                    if isCenterWin:
+                        #return positions of the'sequentialPositionsNeeded' cells and the winner's ID.
+                        winnerFound= True
+                        winnerPlayerID= playerID
+                        winningDirection= [rowdirection, columndirection]
+                        sequentialCells[winnerPlayerID]= sequentialCells[winnerPlayerID] + [(winningPositions, winningDirection)]
+                        winnerFound= False
+                        winnerPlayerID= 0
+                        winningDirection=[]
+                        winningPositions= py.zeros((sequentialPositionsNeeded,2));
+                       #winningPositions(1, :)=[centerrow centercolumn];
+                       # for resultRow=1:(sequentialPositionsNeeded-1)
+                       #   winningPositions(resultRow+1, :)=[(centerrow + resultRow*rowdirection) (centercolumn + resultRow*columndirection)];
+                       #end
+                    else:
+                        #winnerPlayerID= 0;
+                        winningPositions= py.zeros((sequentialPositionsNeeded,2))
+                    #end
+                    direct= direct + 1
+                #end           
+            #end
+            column= column + 1        
+    #end 
+        row= row + 1
+#end
+#here, there are no winners. winnerPlayerID is already 0.
+    return sequentialCells
 
 '''
   '@param gameBoard - backend matrix for game
@@ -391,7 +465,31 @@ def playMove( (x,y), gameBoard, boardHandler, playerColor, player ):
             boardHandler.gca().add_artist(circle)
             plt.draw()
             return gui.NUM_ROWS-i-1,x
-        
+
+'''
+  '''
+def getData(playerTurn):
+    trainPlies= []
+    with open("Connect4Train.data",'r') as f:
+        for line in f:
+            plie=  line.strip()
+            plie= plie.split(",")
+            newPlie= []
+            for val in plie[0:-1]:
+                newPlie.append( float(val) )
+            if playerTurn == 1:
+                newPlie.append( plie[-1]) 
+            elif playerTurn == 2:
+                if plie[-1] == 'win':
+                    newPlie.append( 'loss' )
+                elif plie[-1] == 'loss':
+                    newPlie.append( 'win' )
+                elif plie[-1] == 'draw':
+                    newPlie.append( 'draw' )
+            #plie= plie[0:-1]
+            trainPlies.append( newPlie )
+    return trainPlies
+
 '''#testing yieldsWin
 b= py.zeros((6,7))
 b[0,0:3]= 1

@@ -666,9 +666,62 @@ def randomOffenseOneWithTwicePlus( gameBoard, playerTurn ):
     return bestMove, 0
 
 def forwardEval( gameBoard, playerTurn ):
-    move, _,_= aif.nextMove( gameBoard, 4, playerTurn )
-    return move, 0
+    '''move, flag= randomOffenseWithTwicePlus( gameBoard, playerTurn )
+    if flag != 0:
+        return move, flag'''
+    move2, _,_= aif.nextMove( gameBoard, 3, playerTurn )
+    #if move2:
+    return move2, 0
+        
+    #return move, 0
 
+def knnPlayer( trainPlies, gameBoard, playerTurn ):
+    bestMove= (None,None)
+    bestAcc= -float("inf")
+    #consider your next step
+    validMoves= aif.getValidMoves( gameBoard )
+    for (x, y) in validMoves:
+        gameBoard[x,y]= playerTurn
+        plie= []
+        numrows, numColumns= py.shape(gameBoard)
+        for i in range(0,numColumns):
+            plie+=  reversed( gameBoard[0:numrows,i] ) 
+        print "plie is: ", plie
+        bestK,bestVals= aif.knn( 10000, trainPlies, plie, playerTurn )
+        #weighted majority
+        acc= 0.0
+        for index in range(0, len(bestVals) ):
+            if bestK[index][-1] == 'win':
+                acc+= bestVals[index]
+            elif bestK[index][-1] == 'loss':
+                acc-= bestVals[index]
+            #elif bestK[index][-1] == 'draw':
+            #    acc-= bestVals[index]
+        if acc > bestAcc:
+            #probably win for us
+            bestMove= (x,y)
+            bestAcc= acc
+            
+        gameBoard[x,y]= 0
+    
+    return bestMove,0
+ 
+def minimaxKnn( trainPlies, gameBoard, playerTurn ):
+    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn)
+    print "***************************************** END GAME TREE *******************************"
+    childrenNodes= gameTree.structure[ gameTree.structure[ 0 ] ]
+    bestAcc= gameTree.structure[ 0 ].value
+    bestMove= (None,None)
+    for child in childrenNodes:
+        if child.value == bestAcc:
+            print "bestMove: ", child.move
+            print" resulting board: ", child.board
+            print "Accuracy is: ", bestAcc
+            bestMove= child.move
+            return bestMove, 0
+        else:
+            print "what happened???/????????"
+    
 '''b= py.zeros((6,7))
 (x,y),z= randomOffense(b, 1)'''
 

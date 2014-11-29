@@ -1,6 +1,99 @@
 import numpy as py
 import gamelogicfunctions as glf
+from operator import itemgetter
 
+
+class Node:
+    
+    def __init__(self, board, move, parentNode, playerTurn, isLeaf=False):
+        self.parentNode= parentNode
+        self.board= board
+        self.isLeaf= isLeaf
+        self.playerTurn= playerTurn
+        self.value= 0.0
+        self.move= move
+
+class Tree:
+    
+    def __init__(self, startBoard, numTurns, trainPlies, playerTurn):
+        self.structure= dict()
+        self.leafNodes= []
+        self.trainPlies= trainPlies
+        self.structure[0]= Node( startBoard,(None,None), None, playerTurn )
+        self.createGameTree( self.structure[0], numTurns, playerTurn )
+        self.scoreTree( playerTurn )
+        
+        
+    def createGameTree(self, startBoard, numTurns, playerTurn ):
+        if numTurns == 0:
+            #give score to current leaf 'startBoard'
+            return
+        else:
+            validMoves= getValidMoves( startBoard.board )
+            for (x,y) in validMoves:
+                nextBoard= py.copy(startBoard.board)
+                nextBoard[x,y]= playerTurn
+                if numTurns - 1 == 0:
+                    nextBoard= Node( nextBoard, (x,y), startBoard, playerTurn, isLeaf=True )
+                    self.leafNodes.append( nextBoard )
+                else:
+                    nextBoard= Node( nextBoard, (x,y), startBoard, playerTurn )
+                try:
+                    self.structure[startBoard].append( nextBoard )
+                except KeyError:
+                    self.structure[startBoard]= [ nextBoard ]
+                self.createGameTree( nextBoard, numTurns-1, getOpponent(playerTurn) )
+    
+    def getPriorGen(self, nodeList ):
+        parents= []
+        for node in nodeList:
+            if node.parentNode not in parents:
+                parents.append( node.parentNode )
+        #parents= set( parents )
+        #parents= list( parents )
+        return parents
+    
+    def scoreTree(self, playerTurn):
+        print "//////////////////////// START SCORE //////////////////////////////"
+        for boardNode in self.leafNodes:
+            plie= []
+            numrows, numColumns= py.shape(boardNode.board)
+            for i in range(0,numColumns):
+                plie+=  reversed( boardNode.board[0:numrows,i] ) 
+            bestK,bestVals= knn( 150, self.trainPlies, plie, boardNode.playerTurn )
+            #print "bestKs are: " + str(bestK)
+            #weighted majority
+            acc= 0.0
+            for index in range(0, len(bestVals) ):
+                if bestK[index][-1] == 'win':
+                    acc+= bestVals[index]
+                elif bestK[index][-1] == 'loss':
+                    acc-= bestVals[index]
+                elif bestK[index][-1] == 'draw':
+                    acc+= bestVals[index]
+            #print "board is: ", boardNode.board
+            #print "value is: ", acc
+            boardNode.value= acc
+        
+        #recurse up the tree
+        children= self.leafNodes
+        parents= self.getPriorGen( children )
+        while parents != [None]:
+            for parentNode in parents:
+                childrenOfParent= self.structure[parentNode]
+                player= childrenOfParent[0].playerTurn
+                childrenValues= []
+                for child in childrenOfParent:
+                    childrenValues.append( child.value )
+                if player == playerTurn:
+                    #get maximum
+                    parentNode.value= max( childrenValues )
+                else:
+                    #get minimum
+                    parentNode.value= min( childrenValues )
+            children= parents
+            parents= self.getPriorGen( children )            
+            
 
 def getOpponent(playerTurn):
     if playerTurn == 1:
@@ -121,6 +214,15 @@ def scoreBoard(gameBoard, playerTurn):
                     
     return myScores, yourScores, candidateSlots 
 
+'''
+  '@param gameBoard1 - first of two board states to compare
+  '@param gameBoard2 - second of two board states to compare
+  '@param playerTurn - player making the analysis
+  '@spec only flag returned used thus far. Determines which board has a better state for playerTurn
+  '@return flag {-1,0,1}, score for playerTurn, score for opponent
+  '@calling glf.boardContainsWinner
+  '@caller lookAheadOne, lookAheadTwice, lookAheadThrice
+  '''
 def isBetterState(gameBoard1, gameBoard2, playerTurn):
     #return compare(gameBoard1, gameBoard2, playerTurn)
     isWinner, winner, pos, direction= glf.boardContainsWinner( gameBoard1, 4 )
@@ -257,7 +359,7 @@ def compare(gameBoard1, gameBoard2, playerTurn):
   '@calling scoreBoard, moveYieldsPossibleWin, uselessSlotFilter, getValidMoves,
             glf.getSequentialCellsPlus, glf.getSequentialCells, getOpponent
   '''
-def evalB( gameBoard, playerTurn ):
+def evalB2( gameBoard, playerTurn ):
     opponentTurn= getOpponent( playerTurn )
     
     #get whether board contains win or loss (or both)
@@ -290,16 +392,77 @@ def evalB( gameBoard, playerTurn ):
         offPlays= len(validMoves)
         
     #get the number of win/lose opportunities
-    sequentialCells= glf.getSequentialCellsPlus( gameBoard, 3 )
+    sequentialCells= glf.getSequentialCellsPlus( gameBoard, 4 )
     winOpportunities= sequentialCells[playerTurn]
     loseOpportunities= sequentialCells[opponentTurn]
     numWins= len(winOpportunities)
     numLosses= len(loseOpportunities)
 
     #calculate linear combination
-    value= wins * 1000 + losses * (-1000) + tempPt * 0.1 + tempOt * (-0.3) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.5)
+    #value= wins * 10000 + losses * (-10000) + tempPt * 0.3 + tempOt * (-0.1) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.3)
+    value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + numWins * 0.6 + tempPt * 0.1 + numLosses * (-0.1) +  + tempOt * (-0.1)
+    print "value is ", value
     return value
+
+'''
+  '@param gameBoard - matrix representing game grid's current state
+  '@spec score given gameBoard according to a linear combination of the following features:
+        2 -- board contains win or loss (consider number of such wins or losses as coefficient)
+        2 -- result of scoreBoard (how to use?)
+        1 -- the number of offensive plays (from moveYieldsPossibleWin)
+        2 -- the number of lose/win opportunities (from sequentialCellsPlus as used in lookAheadTwicePlus)
+          --
+  '@return value representing linear combination of above features
+  '@caller nextMove
+  '@calling scoreBoard, moveYieldsPossibleWin, uselessSlotFilter, getValidMoves,
+            glf.getSequentialCellsPlus, glf.getSequentialCells, getOpponent
+  '''
+def evalB( gameBoard, playerTurn ):
+    opponentTurn= getOpponent( playerTurn )
     
+    #get whether board contains win or loss (or both)
+    allWins= glf.getSequentialCellsNoV( gameBoard, 4 )
+    wins= len( allWins[playerTurn] )
+    losses= len( allWins[opponentTurn] )
+    
+    #get results of scoreBoard
+    myScores, yourScores, candidateSlots= scoreBoard( gameBoard, playerTurn )
+    times= 2
+    tempPt= 0.0
+    tempOt= 0.0
+    for score in sorted(candidateSlots.keys(), reverse=True):
+        if times == 0:
+            break
+        nextBests= candidateSlots[score]
+        for x,y,player in nextBests:
+            if player == playerTurn:
+                #update partial score
+                tempPt+= score
+            else:
+                tempOt+= score
+        times-=1
+    
+    #get the number of offensive plays
+    offPlays= 0.0
+    validMoves= getValidMoves( gameBoard )
+    filterWorked, validMoves= uselessSlotFilter( gameBoard, validMoves, playerTurn )
+    if filterWorked:
+        offPlays= len(validMoves)
+        
+    #get the number of win/lose opportunities
+    sequentialCells= glf.getSequentialCellsPlus( gameBoard, 4 )
+    winOpportunities= sequentialCells[playerTurn]
+    loseOpportunities= sequentialCells[opponentTurn]
+    numWins= len(winOpportunities)
+    numLosses= len(loseOpportunities)
+
+    #calculate linear combination
+    #value= wins * 10000 + losses * (-10000) + tempPt * 0.3 + tempOt * (-0.1) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.3)
+    #value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + numWins * 0.6 + tempPt * 0.1 + numLosses * (-0.1) +  + tempOt * (-0.1)
+    value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + tempPt * 0.1 + numWins * 0.1 + numLosses * (-0.05) + tempOt * (-0.05)
+    print "value is ", value
+    return value
+
   
 '''
   '@param startBoard - matrix representing game grid
@@ -325,6 +488,21 @@ def simulate(startBoard, results, playerTurn, numTurns, move):
             else:
                 simulate( nextBoard, results, getOpponent(playerTurn), numTurns - 1, move )
 
+def gameTree(startBoard, tree, playerTurn, numTurns, move):
+    if numTurns == 0:
+        #return startBoard
+        return startBoard
+    else:
+        validMoves= getValidMoves( startBoard )
+        for (x,y) in validMoves:
+            nextBoard= py.copy(startBoard)
+            nextBoard[x,y]= playerTurn
+            if not move:
+                gameTree( nextBoard, results, getOpponent(playerTurn), numTurns - 1, (x,y) )
+            else:
+                gameTree( nextBoard, results, getOpponent(playerTurn), numTurns - 1, move )
+
+
 '''
   '@param gameBoard - matrix representing game grid
   '@param lookAheadTimes - number of moves to consider in analysis
@@ -341,14 +519,54 @@ def nextMove( gameBoard, lookAheadTimes, playerTurn ):
     bestMove= None
     bestBoard= None
     bestValue= -999999999
+    ignoreList= []
     for board, move in finalBoards:
         score= evalB( board, playerTurn )
-        if score > bestValue:
+        if score < 0:
+            ignoreList.append( move )
+    for board, move in finalBoards:
+        if move not in ignoreList and  score > bestValue:
             bestMove= move
             bestBoard= board
             bestValue= score
+    #print bestMove
     return bestMove, bestBoard, bestValue
 
+
+        
+
+
+'''
+  '''
+def cosineSimilarity( board1, board2 ):
+    board1= py.array(board1)
+    board2= py.array(board2)
+    return py.dot(board1, board2) / ( py.linalg.norm(board1)*py.linalg.norm(board2) )
+
+'''
+  '''
+def getBestK( k, trainPlies, gameBoard ):
+    bestK= [None]*k
+    bestVals= [-float('inf')]*k
+    #get best k
+    for i in range(0,k):
+        value= cosineSimilarity( gameBoard, trainPlies[i][0:-1] )
+        (minIndex,minVal)= min(enumerate(bestVals), key=itemgetter(1))
+        if value > minVal:
+            bestVals[minIndex]= value
+            bestK[minIndex]= trainPlies[i]   
+            
+    return bestK, bestVals 
+
+'''
+  '@param
+  '''
+def knn( k, trainPlies, gameBoard, playerTurn ):
+    #print gameBoard
+    #print gameBoard[0]
+    return getBestK( k, trainPlies, gameBoard )
+    
+    
 '''
   '@param(x,y) - coordinates to cell in gameBoard
   '@param gameBoard - matrix representing game grid
@@ -797,7 +1015,7 @@ def getNextColumnMove(y,gameBoard):
   '''
 def getValidMoves(gameBoard):
     validMoves= []
-    numrows, numcolumns= py.shape(gameBoard)
+    (numrows, numcolumns)= py.shape(gameBoard)
     for column in range(0, numcolumns):
         for row in range(0, numrows):
             valid= gameBoard[numrows- row- 1,column]

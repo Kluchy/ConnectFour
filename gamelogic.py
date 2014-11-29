@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as py
 import math
 
+trainPlies= None
 
 '''def startGame():
     boardHandler= gui.createBoard()
@@ -29,6 +30,7 @@ def getPlayerMove(boardHandler):
              ai.randomMovePlus, ai.randomMovePlus2, glf.moveYieldsWin, glf.gameContainsTie
   '''
 def gamePlay(player1Mode, player2Mode, useGui=1):
+    global trainPlies
     sequentialPositionsNeeded= 4
     playerModes= {1:player1Mode, 2:player2Mode}
     if useGui:
@@ -96,6 +98,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "lookAheadThricePlus":
                 (matrixX,matrixY),isBlockOrwin= ai.lookAheadThricePlus(gameBoard, playerTurn)
+                print matrixX,matrixY
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "randomOffense":
                 (matrixX,matrixY),isBlockOrwin= ai.randomOffense(gameBoard, playerTurn)
@@ -108,6 +111,14 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         elif playerModes[playerTurn] == "forwardEval":
                 (matrixX,matrixY),isBlockOrwin= ai.forwardEval(gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "knnPlayer":
+                trainPlies= glf.getData(playerTurn)
+                (matrixX,matrixY),isBlockOrwin= ai.knnPlayer(trainPlies, gameBoard, playerTurn)
+                matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
+        elif playerModes[playerTurn] == "minimaxKnn":
+                trainPlies= glf.getData(playerTurn)
+                (matrixX,matrixY),isBlockOrwin= ai.minimaxKnn(trainPlies, gameBoard, playerTurn)
                 matrixX,matrixY= glf.playMove( (matrixY,matrixX), gameBoard, boardHandler, playerColor, playerTurn )
         print "-------------------------------------------------End Turn---------------------------------------------"
         if moveValid:
@@ -130,7 +141,7 @@ def gamePlay(player1Mode, player2Mode, useGui=1):
                 playerColor= gui.PLAYER1_COLOR
         
 
-gamePlay("Human","forwardEval",1)
+gamePlay("Human","minimaxKnn",1)
 #gamePlay("lookAheadTwicePlus","lookAheadOnePlus",1)
 '''testing yieldsWin
 b= py.zeros((6,7))
@@ -142,3 +153,6 @@ b[1,1]= 1
 b[2,2]= 1
 b[3,3]= 2
 res,winner,pos= moveYieldsWin(b, 4, (3,0),'r')'''
+b= py.zeros((6,7))
+b[0,0:3]= 1
+b[1:4,0]= 2
