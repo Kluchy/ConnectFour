@@ -4,7 +4,14 @@ from operator import itemgetter
 
 
 class Node:
-    
+    '''
+      '@field board - 6X7 matrix of a board game
+      '@field move - (x,y) coordinates of slot played by 'playerturn'
+      '@field parentNode - the Node representing this board's ancestor (this board - move at 'move')
+      '@field playerTurn - the player who created this board by playing at 'move'
+      '@field isLeaf - True if this node is a leaf in our game tree snapshot
+      '@field self.value - score for this board based on a scoring function
+      '''
     def __init__(self, board, move, parentNode, playerTurn, isLeaf=False):
         self.parentNode= parentNode
         self.board= board
@@ -14,16 +21,30 @@ class Node:
         self.move= move
 
 class Tree:
-    
-    def __init__(self, startBoard, numTurns, trainPlies, playerTurn):
+    '''
+      '@field structure - dictionary containing our game tree with root at key '0'.
+                         mapping [parentNode] => list of children Nodes
+      '@field leafNodes - a list of all the leaf nodes in this tree
+      '@field trainPlies - training data of partial boards and labels (win/loss/draw)
+      '''
+    def __init__(self, startBoard, numTurns, trainPlies, playerTurn, scoringFunc):
         self.structure= dict()
         self.leafNodes= []
         self.trainPlies= trainPlies
         self.structure[0]= Node( startBoard,(None,None), None, playerTurn )
         self.createGameTree( self.structure[0], numTurns, playerTurn )
-        self.scoreTree( playerTurn )
+        if scoringFunc == "knn":
+            self.scoreTree( playerTurn )
+        elif scoringFunc == "getSequentialCellsPlus":
+            self.scoreTreeWithSeqCellsPlus( playerTurn )
         
-        
+    '''
+      '@param startBoard - starting board state
+      '@param numTurns - cutoff depth of game tree
+      '@param playerturn - player making the analysis
+      '@spec creates a game tree of depth numturns
+      '@void
+      '''
     def createGameTree(self, startBoard, numTurns, playerTurn ):
         if numTurns == 0:
             #give score to current leaf 'startBoard'
@@ -44,6 +65,12 @@ class Tree:
                     self.structure[startBoard]= [ nextBoard ]
                 self.createGameTree( nextBoard, numTurns-1, getOpponent(playerTurn) )
     
+    '''
+      '@param nodeList - list of Nodes
+      '@return list of Nodes that are the parents of the Nodes in nodeList
+      '@calling
+      '@caller scoreTree
+      '''
     def getPriorGen(self, nodeList ):
         parents= []
         for node in nodeList:
@@ -53,27 +80,21 @@ class Tree:
         #parents= list( parents )
         return parents
     
+    '''
+      '@param playerTurn - the player making the analysis
+      '@void
+      '@spec score all nodes in the tree (self.structure) using weighted-knn values
+      '@caller Tree()
+      '''
     def scoreTree(self, playerTurn):
-        print "//////////////////////// START SCORE //////////////////////////////"
+        #print "//////////////////////// START SCORE //////////////////////////////"
         for boardNode in self.leafNodes:
             plie= []
             numrows, numColumns= py.shape(boardNode.board)
             for i in range(0,numColumns):
                 plie+=  reversed( boardNode.board[0:numrows,i] ) 
-            bestK,bestVals= knn( 150, self.trainPlies, plie, boardNode.playerTurn )
-            #print "bestKs are: " + str(bestK)
-            #weighted majority
-            acc= 0.0
-            for index in range(0, len(bestVals) ):
-                if bestK[index][-1] == 'win':
-                    acc+= bestVals[index]
-                elif bestK[index][-1] == 'loss':
-                    acc-= bestVals[index]
-                elif bestK[index][-1] == 'draw':
-                    acc+= bestVals[index]
-            #print "board is: ", boardNode.board
-            #print "value is: ", acc
-            boardNode.value= acc
+            score= knn( 150, self.trainPlies, plie, boardNode.playerTurn )
+            boardNode.value= score
         
         #recurse up the tree
         children= self.leafNodes
@@ -93,8 +114,51 @@ class Tree:
                     parentNode.value= min( childrenValues )
             children= parents
             parents= self.getPriorGen( children )            
-            
 
+    '''
+      '@param playerTurn - the player making the analysis
+      '@void
+      '@spec score all nodes in the tree (self.structure) using getSequentialCellsPlus
+      '@caller Tree()
+      '@calling glf.getSequentialCellsPlus, glf.boardContainsWinner
+      '''
+    def scoreTreeWithSeqCellsPlus( self, playerTurn ):
+        opponent= getOpponent( playerTurn )
+        for boardNode in self.leafNodes:
+            sequentialCells= glf.getSequentialCellsPlus( boardNode.board, 4 )
+            myCells= sequentialCells[playerTurn]
+            oppCells= sequentialCells[ opponent ]
+            winnerFound, winnerPlayerID, _, _=  glf.boardContainsWinner( boardNode.board, 4 )
+            if winnerFound and winnerPlayerID == opponent:
+                score= len(myCells) - len(oppCells) - 1000.0
+            elif winnerFound and winnerPlayerID == playerTurn:
+                score= len(myCells) - len(oppCells) + 100.0
+            else:
+                score= len(myCells) - len(oppCells)           
+            boardNode.value= score
+           
+        #recurse up the tree
+        children= self.leafNodes
+        parents= self.getPriorGen( children )
+        while parents != [None]:
+            for parentNode in parents:
+                childrenOfParent= self.structure[parentNode]
+                player= childrenOfParent[0].playerTurn
+                childrenValues= []
+                for child in childrenOfParent:
+                    childrenValues.append( child.value )
+                if player == playerTurn:
+                    #get maximum
+                    parentNode.value= max( childrenValues )
+                else:
+                    #get minimum
+                    parentNode.value= min( childrenValues )
+            children= parents
+            parents= self.getPriorGen( children )  
+'''
+  '@param playerTurn - this player's id
+  '@return opposing player's id
+  '''
 def getOpponent(playerTurn):
     if playerTurn == 1:
         return 2
@@ -564,7 +628,20 @@ def getBestK( k, trainPlies, gameBoard ):
 def knn( k, trainPlies, gameBoard, playerTurn ):
     #print gameBoard
     #print gameBoard[0]
-    return getBestK( k, trainPlies, gameBoard )
+    bestK, bestVals= getBestK( k, trainPlies, gameBoard )
+    #print "bestKs are: " + str(bestK)
+    #weighted majority
+    acc= 0.0
+    for index in range(0, len(bestVals) ):
+        if bestK[index][-1] == 'win':
+            acc+= bestVals[index]
+        elif bestK[index][-1] == 'loss':
+            acc-= bestVals[index]
+        elif bestK[index][-1] == 'draw':
+            acc+= bestVals[index]
+    #print "board is: ", boardNode.board
+    #print "value is: ", acc
+    return acc
     
     
 '''

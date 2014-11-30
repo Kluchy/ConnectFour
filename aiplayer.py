@@ -675,6 +675,12 @@ def forwardEval( gameBoard, playerTurn ):
         
     #return move, 0
 
+'''
+  '@param trainPlies - training data in list form Each element is a list of 42 slots for the board followed by a label.
+  '@param gameBoard -  our original 6x7 matrix representation of our board
+  '@param playerTurn - the player running the analysis
+  '@return the best local move as determined by knn (no look-ahead)
+  '''
 def knnPlayer( trainPlies, gameBoard, playerTurn ):
     bestMove= (None,None)
     bestAcc= -float("inf")
@@ -687,7 +693,7 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
         for i in range(0,numColumns):
             plie+=  reversed( gameBoard[0:numrows,i] ) 
         print "plie is: ", plie
-        bestK,bestVals= aif.knn( 10000, trainPlies, plie, playerTurn )
+        bestK,bestVals= aif.knn( 150, trainPlies, plie, playerTurn )
         #weighted majority
         acc= 0.0
         for index in range(0, len(bestVals) ):
@@ -695,8 +701,8 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
                 acc+= bestVals[index]
             elif bestK[index][-1] == 'loss':
                 acc-= bestVals[index]
-            #elif bestK[index][-1] == 'draw':
-            #    acc-= bestVals[index]
+            elif bestK[index][-1] == 'draw':
+                acc+= bestVals[index]
         if acc > bestAcc:
             #probably win for us
             bestMove= (x,y)
@@ -706,8 +712,44 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
     
     return bestMove,0
  
+'''
+  '@param trainPlies -  training data in list form Each element is a list of 42 slots for the board followed by a label
+  '@param gameBoard - our original 6x7 matrix representation of our board
+  '@param playerTurn - the player running the analysis
+  '@return the best move as determined by minimax algorithm with weighted-knn as a scoring function
+  '@spec this creates a game tree and assigns scores to each node using the scoring function and minimax.
+         depth of the tree is determined by a tunable parameter to aif.Tree (number of turns)
+  '@caller gamelogic.gamePlay
+  '@calling aif.Tree
+  '''
 def minimaxKnn( trainPlies, gameBoard, playerTurn ):
-    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn)
+    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn, "knn")
+    print "***************************************** END GAME TREE *******************************"
+    childrenNodes= gameTree.structure[ gameTree.structure[ 0 ] ]
+    bestAcc= gameTree.structure[ 0 ].value
+    bestMove= (None,None)
+    for child in childrenNodes:
+        if child.value == bestAcc:
+            print "bestMove: ", child.move
+            print" resulting board: ", child.board
+            print "Accuracy is: ", bestAcc
+            bestMove= child.move
+            return bestMove, 0
+        else:
+            print "what happened???/????????"
+
+'''
+  '@param trainPlies -  training data in list form Each element is a list of 42 slots for the board followed by a label
+  '@param gameBoard - our original 6x7 matrix representation of our board
+  '@param playerTurn - the player running the analysis
+  '@return the best move as determined by minimax algorithm with getSequentialCellsPlus as a scoring function
+  '@spec this creates a game tree and assigns scores to each node using the scoring function and minimax.
+         depth of the tree is determined by a tunable parameter to aif.Tree (number of turns)
+  '@caller gamelogic.gamePlay
+  '@calling aif.Tree
+  '''
+def minimaxSeqCellsPlus( trainPlies, gameBoard, playerTurn ):
+    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn, "getSequentialCellsPlus")
     print "***************************************** END GAME TREE *******************************"
     childrenNodes= gameTree.structure[ gameTree.structure[ 0 ] ]
     bestAcc= gameTree.structure[ 0 ].value
