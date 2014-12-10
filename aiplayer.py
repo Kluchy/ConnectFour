@@ -8,6 +8,8 @@ import aifunctions as aif
    also use as default for smarter players
   '@param gameBoard - underlying matrix representing game grid
   '@return coordinates of cell in which player decides to play
+  '@calling glf.isFull, glf.isMoveValid
+  '@caller gl.gameplay, randomMovePlus, randomMovePlus2, randomMovePlusPlus
   '''
 def randomMove(gameBoard):
     if glf.isFull( gameBoard ):
@@ -18,29 +20,22 @@ def randomMove(gameBoard):
     while not glf.isMoveValid( randomColumn, gameBoard):
         #randomRow= random.randint(0,numrows-1)
         randomColumn= random.randint(0,numcolumns-1)   
-    print "playing randomly at " ,randomRow, randomColumn 
+    #print "playing randomly at " ,randomRow, randomColumn 
     return randomRow, randomColumn
 
 '''random player that tries to block opponent or win if it notices the possibility
   '@param gameBoard - underlying matrix representing game grid
   '@return coordinates of cell in which player decides to play
-  '@calling randomMove, blockOpponent, boardContainsWinner
+  '@calling randomMove, aif.blockOpponent, glf.boardContainsWinner
+  '@caller gl.gamePlay
   '''
 def randomMovePlus(gameBoard):
     move= None
     res,winner,pos,direction= glf.boardContainsWinner(gameBoard,3)
-    #print res
-    #print winner
-    #print pos
-    #print direction
     if res:
-        #print "BLOCK OR WIN BLOCK OR WIN"
         move= aif.blockOpponent(gameBoard, pos, direction)
-        #print "block at: "
-        #print move
     else:
         move= randomMove(gameBoard)
-    
     if not move:
         return randomMove(gameBoard)
     else:
@@ -49,21 +44,19 @@ def randomMovePlus(gameBoard):
 '''random player that blocks opponent or wins if possible
   '@param gameBoard - underlying matrix representing game grid
   '@return coordinates of cell in which player decides to play
-  '@calling randomMove, blockOpponent, getSequentialCells
+  '@calling randomMove, aif.blockOpponent, glf.getSequentialCells
   '''
 def randomMovePlus2(gameBoard, playerTurn):
     move= None
     sequentialCells= glf.getSequentialCells(gameBoard,3)
-    #print "sequential cells are: "
-    #print sequentialCells
     if playerTurn == 1:
         possibleWins= sequentialCells[1]
         possibleLosses= sequentialCells[2]
     elif playerTurn == 2:
         possibleWins= sequentialCells[2]
         possibleLosses= sequentialCells[1]
-        
-    #print "TRY TO WIN"
+    
+    #try to win
     for pos, direction in possibleWins:
         move= aif.blockOpponent(gameBoard, pos, direction)
         if move:
@@ -87,14 +80,13 @@ def randomMovePlus2(gameBoard, playerTurn):
 '''random player that blocks opponent or wins if possible
   '@param gameBoard - underlying matrix representing game grid
   '@return coordinates of cell in which player decides to play, and a flag for randomness
-  '@calling randomMove, blockOpponent, getSequentialCells
-  '@caller gamePlay, bestLocalMovePlus
+  '@calling randomMove, aif.blockOpponent, glf.getSequentialCells
+  '@caller gl.gamePlay, bestLocalMovePlus, randomOffense
   '''
 def randomMovePlusPlus(gameBoard, playerTurn):
     move= None
     sequentialCells= glf.getSequentialCellsPlus(gameBoard,4)
-    #print "sequential cells are: "
-    #print sequentialCells
+
     if playerTurn == 1:
         possibleWins= sequentialCells[1]
         possibleLosses= sequentialCells[2]
@@ -129,8 +121,8 @@ def randomMovePlusPlus(gameBoard, playerTurn):
   '@param playerTurn - playerID in game 1 or 2)
   '@return best local move as determiend by our formula, None otherwise
   '@spec formula: best slot based on scoreBoard
-  '@calling aif.scoreBoard, aif.isPlayable
-  '@caller bestLocalMovePlus, gamePlay
+  '@calling aif.scoreBoard, aif.isSafeToPlay
+  '@caller bestLocalMovePlus, gl.gamePlay
   '''
 def bestLocalMove(gameBoard, playerTurn):
     #score board for this player and opponent
@@ -144,29 +136,24 @@ def bestLocalMove(gameBoard, playerTurn):
             else:
                 #print "CANNOT PLAY AT ", x, y,"-----------------------------------"
                 pass
-    #return myScores, yourScores,candidateSlots
 
 '''
   '@param gameBoard - underlying matrix representing game grid
   '@param playerTurn - playerID in game 1 or 2)
   '@return best move based on ourformula and current state, or random if cannot determine the best one
-  '@calling randomPlusPlus, bestLocalMove
-  '@caller gamePlay
-  '@TODO ONLY RETURN TRUE WHEN RANDOMMOVEPLUS RETURNS BLOCKORWIN
+  '@calling randomMovePlusPlus, bestLocalMove
+  '@caller gl.gamePlay, lookaAheadOne, lookAheadOnePlus
   '''
 def bestLocalMovePlus(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus(gameBoard, playerTurn)
     if isRandom:
         best= bestLocalMove(gameBoard, playerTurn)
         if best:
-            print "bestLocalMovePlus: ", best
             return best, not isRandom
         else:
             #print "GOING TO PLAY RANDOMLY"
             return move, not isRandom
     else:
-        #print "NOT RANDDOM BUUUUUUUUUUUUUUUT"
-        print "bestLocalMovePlus Block Or Win: ", move
         return move, not isRandom
 
 '''
@@ -175,7 +162,7 @@ def bestLocalMovePlus(gameBoard, playerTurn):
   '@return best move based on our formula and one look ahead, or random if cannot determine the best one 
   '@spec formula: best board based on isBetterState
   '@calling bestLocalMovePlus, aif.isBetterState, aif.getValidMoves
-  '@caller gamePlay
+  '@caller gl.gamePlay
   '''
 def lookAheadOne(gameBoard, playerTurn):
     #get all possible moves on gameBoard
@@ -184,7 +171,7 @@ def lookAheadOne(gameBoard, playerTurn):
     bestMove, isBlockOrWin= bestLocalMovePlus(gameBoard, playerTurn)
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
-        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        #print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
     #find the best play that is neither a block or a win
     bestBoard= py.copy(gameBoard)
@@ -195,7 +182,7 @@ def lookAheadOne(gameBoard, playerTurn):
         newBoard[x,y]= playerTurn
         isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
         if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            #print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
     #return move leading to that state
@@ -215,7 +202,7 @@ def lookAheadTwice(gameBoard, playerTurn):
     #get best move based on state of resulting boards
     myBestMove, isBlockOrWin= lookAheadOne(gameBoard, playerTurn)
     if isBlockOrWin:
-        print "FOUND IS BLOCK OR WIN FROM LOOKAHEADONE"
+        #print "FOUND IS BLOCK OR WIN FROM LOOKAHEADONE"
         return myBestMove, isBlockOrWin
     bestBoard= py.copy(gameBoard) #board state after opponent makes a move
     #play my best move based on local state
@@ -237,7 +224,7 @@ def lookAheadTwice(gameBoard, playerTurn):
         #score state opponent led to
         isNewBetter, myScore, yourScore= aif.isBetterState(opponentBoard, bestBoard, opponentTurn)
         if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN lookAheadOne: ", x,y
+            #print "FOUND SOMETHING BETTER THAN lookAheadOne: ", x,y
             myBestMove= (x,y)
             bestBoard= opponentBoard
             yourBestMove= opponentMove
@@ -250,7 +237,7 @@ def lookAheadTwice(gameBoard, playerTurn):
   '@return best move based on our formula and two look aheads, or random if cannot determine the best one
   '@spec formula: best board based on isBetterState
   '@calling lookAheadOne, lookAheadTwice, aif.getValidMoves, aif.getOpponent, aif.isBetterState
-  '@caller gamePlay
+  '@caller gl.gamePlay
   '''
 def lookAheadThrice(gameBoard, playerTurn):
     #get all possible moves on gameBoard
@@ -258,14 +245,14 @@ def lookAheadThrice(gameBoard, playerTurn):
     #get best move based on state of resulting boards
     myBestMove, isBlockOrWin= lookAheadTwice(gameBoard, playerTurn)
     if isBlockOrWin:
-        print "NOT GONNA BOTHER, FOUND BLOCK OR WIN"
+        #print "NOT GONNA BOTHER, FOUND BLOCK OR WIN"
         return myBestMove, isBlockOrWin
     bestBoard= py.copy(gameBoard)
     #play my best move based on local state
     bestBoard[myBestMove]= playerTurn
     opponentTurn= aif.getOpponent(playerTurn)
     yourBestMove, _= lookAheadTwice(bestBoard, opponentTurn)
-    print "lookAheadThrice -- yourBestMove ", yourBestMove
+    #print "lookAheadThrice -- yourBestMove ", yourBestMove
     #play opponent's best move based on local state
     bestBoard[yourBestMove]= opponentTurn
     myOtherBestMove, _= lookAheadTwice(bestBoard, playerTurn)
@@ -284,9 +271,9 @@ def lookAheadThrice(gameBoard, playerTurn):
         newBoard[myMove]= playerTurn
         #score this 'final' state
         isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-        print  isNewBetter, myScore, yourScore
+        #print  isNewBetter, myScore, yourScore
         if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN lookAheadTwice: ", x,y
+            #print "FOUND SOMETHING BETTER THAN lookAheadTwice: ", x,y
             bestBoard= newBoard
             myBestMove= (x,y)
     
@@ -310,10 +297,11 @@ def lookAheadOnePlus(gameBoard, playerTurn):
     myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
     if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
         #CAN USE THIS TO PREVENT CONNECT FOUR TRAPS
-        print "BEST MOVE IS A LOSS?!?!?!"
+        #print "BEST MOVE IS A LOSS?!?!?!"
+        pass
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
-        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        #print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
     #find the best play that is neither a block or a win
     bestBoard= py.copy(gameBoard)
@@ -330,22 +318,12 @@ def lookAheadOnePlus(gameBoard, playerTurn):
         newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
         newWinOpportunities= newSequentialCells[playerTurn]
         newLoseOpportunities= newSequentialCells[opponentTurn]
-        print "let's consider what happens if we played at ", x,y
-        #print "oldLoseOpportunities: ", oldLoseOpportunities
-        #print "newLoaseOpportunities: ", newLoseOpportunities
-        #print "About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-        print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
-        #if len(newWinOpportunities) > len(oldWinOpportunities):
+        
         myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
         if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
-            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
+            #print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
             bestMove= (x,y)
             bestBoard= newBoard
-        '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-        if isNewBetter == 1:
-            print "FOUND SOMETHING BETTER THAN BESTLOCALMOVEPLUS: ", x,y
-            bestMove= (x,y)
-            bestBoard= newBoard'''
     #return move leading to that state
     return bestMove, isBlockOrWin
     
@@ -357,7 +335,7 @@ def lookAheadOnePlus(gameBoard, playerTurn):
   '@spec formula: best board based on is playable and sequentiallCells (3)
   '@calling lookAheadOnePlus, aif.getValidMoves, aif.scoreBoard, aif.getOpponent,
             glf.getSequentialCellsPlus, aif.isSafeToPlay, aif.isSafeToPlayPlus, aif.preventTrapPlus replaced by aif.blockTrap         
-  '@caller gamePlay
+  '@caller gl.gamePlay, lookAheadThricePlus
   '''
 def lookAheadTwicePlus(gameBoard, playerTurn):
     #get all possible moves on gameBoard
@@ -368,28 +346,24 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
     #score board for this player and opponent
     myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
     if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
-        print "lookAheadTwicePlus: -- BEST MOVE IS A LOSS?!?!?!"
+        #print "lookAheadTwicePlus: -- BEST MOVE IS A LOSS?!?!?!"
+        pass
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
-        print "FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
 
     bestBoard= py.copy(gameBoard)
-    bestBoard[bestMove]= playerTurn #py.zeros(py.shape(gameBoard))
+    bestBoard[bestMove]= playerTurn
     trapFlag= 0
     slot= (-1,-1)
     opponentTurn= aif.getOpponent(playerTurn)
     opponentPossibleMoves= aif.getValidMoves(bestBoard)
     for x,y in opponentPossibleMoves:
-        print" opoonent move: ", x,y
         temp= py.copy(bestBoard)
         temp[x,y]= opponentTurn
-        #t, s= aif.preventTrapPlus(gameBoard,bestMove, (x,y), temp, playerTurn)
         t, s= aif.blockTrap(gameBoard,bestMove, (x,y), temp, playerTurn)
-        print "flag flagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflag ", t
         if t == 1 and aif.isSafeToPlayPlus( s, playerTurn, gameBoard ):
-            print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
-            print s
+            #print " PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
             return s, 2
         elif t == -1:
             trapFlag= t
@@ -401,17 +375,10 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
     yourBestMove, _= lookAheadOnePlus(bestBoard, opponentTurn)
     bestBoard[yourBestMove]= opponentTurn
     
-    
-    #trapFlag, slot= aif.preventTrapPlus(gameBoard,bestMove, yourBestMove, bestBoard, playerTurn)
-    print "trapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflag rapflagrapflag ", trapFlag
-    '''if trapFlag == 1: 
-        print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTWICEPLUS ----------------------------"
-        print slot
-        return slot, 2'''
     #find the best play that is neither a block or a win
     for x,y in possibleMoves:
         if trapFlag == -1 and (x,y) == slot:
-            print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
+            #print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
             pass
         else:
             #play move
@@ -421,7 +388,7 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
             opponentMove, _= lookAheadOnePlus(gameBoard, opponentTurn)
             newBoard[opponentMove]= opponentTurn
             if trapFlag == -1 and bestMove == slot and (x,y) != slot and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
-                print "REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
+                #print "REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
                 bestMove= (x,y)
                 bestBoard= newBoard
                 trapFlag= 0
@@ -431,21 +398,12 @@ def lookAheadTwicePlus(gameBoard, playerTurn):
             newSequentialCells= glf.getSequentialCellsPlus( newBoard, 3 )
             newWinOpportunities= newSequentialCells[playerTurn]
             newLoseOpportunities= newSequentialCells[opponentTurn]
-            #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-            #print "lookAheadTwicePlus ---- let's consider what happens if we played at ", x,y
-            #print "About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
-            #if len(newWinOpportunities) > len(oldWinOpportunities):
+
             myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
             if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
-            #if len(newWinOpportunities) > len(oldWinOpportunities):
-                print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
+                #print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
                 bestMove= (x,y)
                 bestBoard= newBoard
-            '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-            if isNewBetter == 1:
-                print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
-                bestMove= (x,y)
-                bestBoard= newBoard'''
     #return move leading to that state
     if trapFlag == -1 and bestMove == slot:
         #print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
@@ -470,13 +428,14 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     #score board for this player and opponent
     myOrScores, yourOrScores, orCandidateSlots= aif.scoreBoard(gameBoard, playerTurn)
     if not aif.isSafeToPlay((x,y), yourOrScores, gameBoard):
-        print "lookAheadThricePlus: -- BEST MOVE IS A LOSS?!?!?!"
+        #print "lookAheadThricePlus: -- BEST MOVE IS A LOSS?!?!?!"
+        pass
     if isBlockOrWin:
         #there cannot be a better play than a block or a win
-        print "lookAheadThricePlus: --- FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
+        #print "lookAheadThricePlus: --- FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
     elif isBlockOrWin == 2:
-        print "PREVENTION WORKS WITH LOOKAHEADTHRICEPLUS!!!!!!"
+        #print "PREVENTION WORKS WITH LOOKAHEADTHRICEPLUS!!!!!!"
         return bestMove, 2
 
     bestBoard= py.copy(gameBoard)
@@ -486,14 +445,11 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     opponentTurn= aif.getOpponent(playerTurn)
     opponentPossibleMoves= aif.getValidMoves(bestBoard)
     for x,y in opponentPossibleMoves:
-        print" opoonent move: ", x,y
         temp= py.copy(bestBoard)
         temp[x,y]= opponentTurn
         t, s= aif.preventTrapPlus(gameBoard,bestMove, (x,y), temp, playerTurn)
-        print "flag flagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflagflag ", t
         if t == 1:
-            print "WOOOOOOOOOOOOOOOOH PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTHRICEPLUS ----------------------------"
-            print s
+            #print " PREVENTING TRAAAAAAAAAP IN DEFAULT LOOKAHEADTHRICEPLUS ----------------------------"
             return s, 2
         elif t == -1:
             trapFlag= t
@@ -511,7 +467,7 @@ def lookAheadThricePlus(gameBoard, playerTurn):
     #find the best play that is neither a block or a win
     for x,y in possibleMoves:
         if (x,y) == slot:
-            print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
+            #print "AVOIDING AVOINDING AVOIDING AVOIDING AVOIDING"
             pass
         else:
             #play move
@@ -523,7 +479,7 @@ def lookAheadThricePlus(gameBoard, playerTurn):
             newBoard[opponentMove]= opponentTurn
             flag2,slot2= aif.preventTrapPlus(gameBoard, (x,y), opponentMove, newBoard, playerTurn)
             if trapFlag == -1 and flag2 != -1 and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
-                print "ThricePlus: REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
+                #print "ThricePlus: REPLACING BAD BEST MOVE ", bestMove, " LEADING TO TRAP WITH ", x,y
                 bestMove= (x,y)
                 bestBoard= newBoard
                 trapFlag= 0
@@ -535,8 +491,7 @@ def lookAheadThricePlus(gameBoard, playerTurn):
             flag3,slot3= aif.preventTrapPlus(newBoardAfterMyFirstTurn, opponentMove, myMove, newBoard, opponentTurn)
             if flag3 == 1 and aif.isSafeToPlayPlus( slot3, playerTurn, gameBoard ):
                 #Trap already active in our favor, use it!
-                print "Trap already active in our favor, use it! Trap already active in our favor, use it! Trap already active in our favor, use it! Trap already active in our favor, use it!"
-                return slot3
+                return slot3, 1
             if flag3 == -1 and aif.isSafeToPlayPlus( slot3, playerTurn, gameBoard ):
                 #opponent made a move that activated the trap: consider our move that led to it as a valid place to play
                 pass
@@ -550,13 +505,13 @@ def lookAheadThricePlus(gameBoard, playerTurn):
                 newWinOpportunities= newSequentialCells[playerTurn]
                 newLoseOpportunities= newSequentialCells[opponentTurn]
                 #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-                print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
-                print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
+                #print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
+                #print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
                 #if len(newWinOpportunities) > len(oldWinOpportunities):
                 myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
                 if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
                 #if len(newWinOpportunities) > len(oldWinOpportunities):
-                    print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
+                    #print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
                     bestMove= (x,y)
                     bestBoard= newBoard
                 '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
@@ -566,7 +521,8 @@ def lookAheadThricePlus(gameBoard, playerTurn):
                     bestBoard= newBoard'''
     #return move leading to that state
     if trapFlag == -1 and bestMove == slot:
-        print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
+        #print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
+        pass
     return bestMove, isBlockOrWin
 
 ########################################### START OFFENSIVE PLAYERS ###############################################
@@ -577,12 +533,12 @@ def lookAheadThricePlus(gameBoard, playerTurn):
   '@return best offensive move to make according to our formula, or random if cannot find one
   '@spec formula: make chains of coins in order to get closer to 4 in a row
   '@calling randomMovePlusPlus, aif.getValidMoves, aif.uselessSlotFilter, 
-  '@caller gameplay
+  '@caller gl.gameplay
   '''
 def randomOffense(gameBoard, playerTurn):
     move,isRandom= randomMovePlusPlus( gameBoard, playerTurn )
     if not isRandom:
-        print "RandomOffense --- blocking"
+        #print "RandomOffense --- blocking"
         return move, not isRandom
         
     validMoves= aif.getValidMoves( gameBoard )
@@ -596,11 +552,7 @@ def randomOffense(gameBoard, playerTurn):
                 move= (x,y)
                 bestVal= value
         return move, not isRandom
-    #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     return move, not isRandom
-    '''choice= random.randint( 0, len( validMoves ) - 1 )
-    print "RandomOffense --- attacking"
-    return validMoves[choice], 0'''
 
 '''
   '@param gameBoard - matrix representing game grid
@@ -608,7 +560,7 @@ def randomOffense(gameBoard, playerTurn):
   '@return best offensive move to make according to our formula, or best defensive move from lookAheadTwicePlus
   '@spec formula: make chains of coins in order to get closer to 4 in a row
   '@calling lookAheadTwicePlus, aif.getValidMoves, aif.uselessSlotFilter, aif.blockSingleLineTrap
-  '@caller gameplay
+  '@caller gl.gameplay, randomOffenseOneWithTwicePlus
   '''
 def randomOffenseWithTwicePlus(gameBoard, playerTurn):
     move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
@@ -623,24 +575,27 @@ def randomOffenseWithTwicePlus(gameBoard, playerTurn):
     filterWorked, validMoves= aif.uselessSlotFilter( gameBoard, validMoves, playerTurn )
     if filterWorked:
         #choose move with higher number
-        #move= (-1,-1)
         bestVal= -1
         for (x,y,value) in validMoves:
             if value > 1 and value > bestVal and aif.isSafeToPlayPlus( (x,y), playerTurn, gameBoard ):
                 move= (x,y)
                 bestVal= value
         return move, 0
-    #move,isBlockOrWin= lookAheadTwicePlus(gameBoard,playerTurn)
     return move, 0
 
+'''
+  '@param gameBoard - matrix representing game grid
+  '@param playerTurn - player making the next move:the caller
+  '@return best offensive move to make according to our formula, or best defensive move from randomOffenseWithTwicePlus
+  '@spec formula: make chains of coins in order to get closer to 4 in a row, by looking one step ahead
+  '@calling randomOffenseWithTwicePlus, aif.getValidMoves, aif.uselessSlotFilter, aif.isSafeToPlayPlus
+  '@caller gl.gameplay, randomOffenseOneWithTwicePlus
+  '''
 def randomOffenseOneWithTwicePlus( gameBoard, playerTurn ):
     move,isBlockOrWin= randomOffenseWithTwicePlus(gameBoard,playerTurn)
     if isBlockOrWin == 2 or isBlockOrWin:
         return move, isBlockOrWin
     
-    '''isSingleLineTrap, blockingMove= aif.blockSingleLineTrap(gameBoard, playerTurn)
-    if isSingleLineTrap:
-        return blockingMove, isSingleLineTrap'''
     #consider all my possible moves
     validMoves= aif.getValidMoves( gameBoard )
     bestMove= move
@@ -665,6 +620,13 @@ def randomOffenseOneWithTwicePlus( gameBoard, playerTurn ):
                     bestNumPlayerIDs= value
     return bestMove, 0
 
+'''
+  '@param matrix representing game grid
+  '@param playerTurn - player making the next move:the caller
+  '@return best move as determined by aif.nextMove
+  '@calling aif.nextMove
+  '@caller gl.gamePlay
+  '''
 def forwardEval( gameBoard, playerTurn ):
     '''move, flag= randomOffenseWithTwicePlus( gameBoard, playerTurn )
     if flag != 0:
@@ -673,13 +635,13 @@ def forwardEval( gameBoard, playerTurn ):
     #if move2:
     return move2, 0
         
-    #return move, 0
-
 '''
   '@param trainPlies - training data in list form Each element is a list of 42 slots for the board followed by a label.
   '@param gameBoard -  our original 6x7 matrix representation of our board
   '@param playerTurn - the player running the analysis
   '@return the best local move as determined by knn (no look-ahead)
+  '@calling aif.getValidMoves
+  '@caller gl.gamePlay
   '''
 def knnPlayer( trainPlies, gameBoard, playerTurn ):
     bestMove= (None,None)
@@ -692,17 +654,8 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
         numrows, numColumns= py.shape(gameBoard)
         for i in range(0,numColumns):
             plie+=  reversed( gameBoard[0:numrows,i] ) 
-        print "plie is: ", plie
-        bestK,bestVals= aif.knn( 150, trainPlies, plie, playerTurn )
-        #weighted majority
-        acc= 0.0
-        for index in range(0, len(bestVals) ):
-            if bestK[index][-1] == 'win':
-                acc+= bestVals[index]
-            elif bestK[index][-1] == 'loss':
-                acc-= bestVals[index]
-            elif bestK[index][-1] == 'draw':
-                acc+= bestVals[index]
+        #print "plie is: ", plie
+        acc= aif.knn( 150, trainPlies, plie, playerTurn )
         if acc > bestAcc:
             #probably win for us
             bestMove= (x,y)
@@ -719,50 +672,46 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
   '@return the best move as determined by minimax algorithm with weighted-knn as a scoring function
   '@spec this creates a game tree and assigns scores to each node using the scoring function and minimax.
          depth of the tree is determined by a tunable parameter to aif.Tree (number of turns)
-  '@caller gamelogic.gamePlay
+  '@caller gl.gamePlay
   '@calling aif.Tree
   '''
 def minimaxKnn( trainPlies, gameBoard, playerTurn ):
-    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn, "knn")
-    print "***************************************** END GAME TREE *******************************"
+    depth= min( 4, 42- py.count_nonzero( gameBoard ) )
+    gameTree= aif.Tree(gameBoard, depth, trainPlies, playerTurn, "knn")
     childrenNodes= gameTree.structure[ gameTree.structure[ 0 ] ]
     bestAcc= gameTree.structure[ 0 ].value
     bestMove= (None,None)
     for child in childrenNodes:
         if child.value == bestAcc:
-            print "bestMove: ", child.move
-            print" resulting board: ", child.board
-            print "Accuracy is: ", bestAcc
             bestMove= child.move
             return bestMove, 0
         else:
-            print "what happened???/????????"
+            pass
 
 '''
-  '@param trainPlies -  training data in list form Each element is a list of 42 slots for the board followed by a label
+  '@param trainPlies -  NOT USED training data in list form Each element is a list of 42 slots for the board followed by a label
   '@param gameBoard - our original 6x7 matrix representation of our board
   '@param playerTurn - the player running the analysis
   '@return the best move as determined by minimax algorithm with getSequentialCellsPlus as a scoring function
   '@spec this creates a game tree and assigns scores to each node using the scoring function and minimax.
          depth of the tree is determined by a tunable parameter to aif.Tree (number of turns)
-  '@caller gamelogic.gamePlay
+  '@caller gl.gamePlay
   '@calling aif.Tree
   '''
 def minimaxSeqCellsPlus( trainPlies, gameBoard, playerTurn ):
-    gameTree= aif.Tree(gameBoard, 4, trainPlies, playerTurn, "getSequentialCellsPlus")
-    print "***************************************** END GAME TREE *******************************"
+    depth= min( 4, 42- py.count_nonzero( gameBoard ) )
+    gameTree= aif.Tree(gameBoard, depth, trainPlies, playerTurn, "getSequentialCellsPlus")
     childrenNodes= gameTree.structure[ gameTree.structure[ 0 ] ]
     bestAcc= gameTree.structure[ 0 ].value
     bestMove= (None,None)
     for child in childrenNodes:
         if child.value == bestAcc:
-            print "bestMove: ", child.move
-            print" resulting board: ", child.board
-            print "Accuracy is: ", bestAcc
             bestMove= child.move
+            #print "WE GOT A GOOD MOVE, WE GOT A GOOD MOVE, WE GOT A GOOD MOVE"
             return bestMove, 0
         else:
-            print "what happened???/????????"
+            #print str(child.value) + " != " + str(bestAcc) + " THIS SHOULD NOT HAPPEN WHAT IS GOING ON SOMEETHING MUST BE WRONG WITH SCORING TREE"
+            pass
     
 '''b= py.zeros((6,7))
 (x,y),z= randomOffense(b, 1)'''

@@ -15,6 +15,11 @@ def isEmpty( gameBoard ):
     emptyBoard= py.zeros(shape)
     return py.array_equal( gameBoard, emptyBoard )
 
+'''
+  '@param gameBoard - the back-end matrix representing the board
+  '@return true if gameBoard is full (no 0s), false otherwise
+  '@caller ai.randomMove
+  '''
 def isFull( gameBoard ):
     rows,columns= py.shape(gameBoard)
     for c in range(0, columns):
@@ -26,7 +31,7 @@ def isFull( gameBoard ):
  '@param y - column corresponding to cell clicked by player
  '@param gameBoard - the back-end matrix representing the board
  '@return true if column y has a free (0.) entry, false otherwise (also if y is out of bounds)
- '@caller gamelogic.gamePlay
+ '@caller gamelogic.gamePlay, gameContainsTie
  '''
 def isMoveValid( y, gameBoard ):
     try:
@@ -450,25 +455,26 @@ def getSequentialCellsPlus( gameBoard, sequentialPositionsNeeded ):
 '@param player - player who clicked in x,y
 '@spec updates grid and underlying matrix
 '@return coordintes where coin was placed in matrix
+'@caller gl.gamePlay
 '''
-def playMove( (x,y), gameBoard, boardHandler, playerColor, player ):
-    column= gameBoard[:,x]
-    #print "column is: "
-    #print column
-    
+def playMove( (x,y), gameBoard, boardHandler, playerColor, player, useGui ):
+    column= gameBoard[:,x]    
     for i,cell in enumerate(reversed(column)):
         if cell == 0:
             #gameBoard[gui.NUM_ROWS-i-1,y]= player
             gameBoard[gui.NUM_ROWS-i-1,x]= player
-            #update GUI
-            circle= gui.createCircle( (x + .5,i + .5), playerColor )
-            boardHandler.gca().add_artist(circle)
-            plt.draw()
+            if useGui:
+                #update GUI
+                circle= gui.createCircle( (x + .5,i + .5), playerColor )
+                boardHandler.gca().add_artist(circle)
+                plt.draw()
             return gui.NUM_ROWS-i-1,x
 
 '''
+  '@return training data of connect4 matrix plies from our file
+  '@caller test.py, gamelogic.py
   '''
-def getData(playerTurn):
+def getData():
     trainPlies= []
     with open("Connect4Train.data",'r') as f:
         for line in f:
@@ -477,18 +483,40 @@ def getData(playerTurn):
             newPlie= []
             for val in plie[0:-1]:
                 newPlie.append( float(val) )
-            if playerTurn == 1:
-                newPlie.append( plie[-1]) 
-            elif playerTurn == 2:
-                if plie[-1] == 'win':
-                    newPlie.append( 'loss' )
-                elif plie[-1] == 'loss':
-                    newPlie.append( 'win' )
-                elif plie[-1] == 'draw':
-                    newPlie.append( 'draw' )
+            #if playerTurn == 1:
+            newPlie.append( plie[-1]) 
+            #elif playerTurn == 2:
+            #    if plie[-1] == 'win':
+            #        newPlie.append( 'loss' )
+            #    elif plie[-1] == 'loss':
+            #        newPlie.append( 'win' )
+            #    elif plie[-1] == 'draw':
+            #        newPlie.append( 'draw' )
             #plie= plie[0:-1]
             trainPlies.append( newPlie )
     return trainPlies
+
+'''
+  '@param trainPlies - list of 1x42 plies for machine learning
+  '@param playerTurn - our referenced 'max' player (player from whose perspective to adjust data)
+  '@return a version of trainPlies where labels are adjusted to match playerTurn's perspective.
+  '@caller test.py, gamelogic.py
+  '''
+def adjustData(trainPlies, playerTurn):
+    if playerTurn == 1:
+        return trainPlies
+    adjustedPlies= trainPlies[:]
+    for instance in adjustedPlies:
+        if instance[-1] == 'win':
+            instance[-1]= 'loss'
+        elif instance[-1] == 'loss':
+            instance[-1]= 'win'
+        elif instance[-1] == 'draw':
+            instance[-1]= 'draw'
+    
+    return adjustedPlies
+
+        
 
 '''#testing yieldsWin
 b= py.zeros((6,7))

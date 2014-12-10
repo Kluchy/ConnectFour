@@ -76,8 +76,6 @@ class Tree:
         for node in nodeList:
             if node.parentNode not in parents:
                 parents.append( node.parentNode )
-        #parents= set( parents )
-        #parents= list( parents )
         return parents
     
     '''
@@ -85,9 +83,9 @@ class Tree:
       '@void
       '@spec score all nodes in the tree (self.structure) using weighted-knn values
       '@caller Tree()
+      '@calling getPriorGen
       '''
     def scoreTree(self, playerTurn):
-        #print "//////////////////////// START SCORE //////////////////////////////"
         for boardNode in self.leafNodes:
             plie= []
             numrows, numColumns= py.shape(boardNode.board)
@@ -123,12 +121,17 @@ class Tree:
       '@calling glf.getSequentialCellsPlus, glf.boardContainsWinner
       '''
     def scoreTreeWithSeqCellsPlus( self, playerTurn ):
+        #print "start scoring tree" 
         opponent= getOpponent( playerTurn )
         for boardNode in self.leafNodes:
+            #print "start sequentialCellsPlus"
             sequentialCells= glf.getSequentialCellsPlus( boardNode.board, 4 )
+            #print "end sequentialCellsPlus"
             myCells= sequentialCells[playerTurn]
             oppCells= sequentialCells[ opponent ]
+            #print "start boardContainswinner"
             winnerFound, winnerPlayerID, _, _=  glf.boardContainsWinner( boardNode.board, 4 )
+            #print "end boardContainsWinner"
             if winnerFound and winnerPlayerID == opponent:
                 score= len(myCells) - len(oppCells) - 1000.0
             elif winnerFound and winnerPlayerID == playerTurn:
@@ -136,7 +139,7 @@ class Tree:
             else:
                 score= len(myCells) - len(oppCells)           
             boardNode.value= score
-           
+        #print "done scoring leaves"
         #recurse up the tree
         children= self.leafNodes
         parents= self.getPriorGen( children )
@@ -154,10 +157,12 @@ class Tree:
                     #get minimum
                     parentNode.value= min( childrenValues )
             children= parents
-            parents= self.getPriorGen( children )  
+            parents= self.getPriorGen( children ) 
+        #print "done scoring tree" 
 '''
   '@param playerTurn - this player's id
   '@return opposing player's id
+  '@caller
   '''
 def getOpponent(playerTurn):
     if playerTurn == 1:
@@ -196,7 +201,7 @@ def blockOrWin(gameBoard, pos):
     for row in pos:
         x,y= row[0], row[1]
         if gameBoard[x,y] == 0 and isPlayable( (x,y), gameBoard ):
-            print "Blocking/Winning at ", x, y 
+            #print "Blocking/Winning at ", x, y 
             return (x,y)
     #print "Cannot BlockOrWin??? Hm....."
 
@@ -465,7 +470,7 @@ def evalB2( gameBoard, playerTurn ):
     #calculate linear combination
     #value= wins * 10000 + losses * (-10000) + tempPt * 0.3 + tempOt * (-0.1) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.3)
     value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + numWins * 0.6 + tempPt * 0.1 + numLosses * (-0.1) +  + tempOt * (-0.1)
-    print "value is ", value
+    #print "value is ", value
     return value
 
 '''
@@ -524,7 +529,7 @@ def evalB( gameBoard, playerTurn ):
     #value= wins * 10000 + losses * (-10000) + tempPt * 0.3 + tempOt * (-0.1) + offPlays * 0.4 + numWins * 0.3 +  numLosses * (-0.3)
     #value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + numWins * 0.6 + tempPt * 0.1 + numLosses * (-0.1) +  + tempOt * (-0.1)
     value= wins * 10000 + losses * (-10000)  + offPlays * 0.4 + tempPt * 0.1 + numWins * 0.1 + numLosses * (-0.05) + tempOt * (-0.05)
-    print "value is ", value
+    #print "value is ", value
     return value
 
   
@@ -626,10 +631,7 @@ def getBestK( k, trainPlies, gameBoard ):
   '@param
   '''
 def knn( k, trainPlies, gameBoard, playerTurn ):
-    #print gameBoard
-    #print gameBoard[0]
     bestK, bestVals= getBestK( k, trainPlies, gameBoard )
-    #print "bestKs are: " + str(bestK)
     #weighted majority
     acc= 0.0
     for index in range(0, len(bestVals) ):
@@ -639,8 +641,6 @@ def knn( k, trainPlies, gameBoard, playerTurn ):
             acc-= bestVals[index]
         elif bestK[index][-1] == 'draw':
             acc+= bestVals[index]
-    #print "board is: ", boardNode.board
-    #print "value is: ", acc
     return acc
     
     
@@ -746,7 +746,7 @@ def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
                     isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
                     if isLoss1 and isLoss2:
                         trapFound= True
-                        print slotX, slotY, " and ", slotX-1,slotY 
+                        #print slotX, slotY, " and ", slotX-1,slotY 
                         break
                         
                     #find sequentialPositions leading to a win with this slot
@@ -762,7 +762,7 @@ def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
                     isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
                     if isLoss1 and isLoss2:
                         trapFound= True
-                        print slotX, slotY, " and ", slotX+1,slotY
+                        #print slotX, slotY, " and ", slotX+1,slotY
                         break
                 if slot not in possibleLosses:
                     possibleLosses.append(slot)
@@ -776,7 +776,7 @@ def preventTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
             #then my move opened up the possibility of a trap: do not play at my move
             return -1, myMove
         else:
-            print "preventing trap failed because current moves did not lead to it! What happened..........."
+            #print "preventing trap failed because current moves did not lead to it! What happened..........."
             return -2, myMove 
     else:
         return 0, myMove
@@ -792,10 +792,10 @@ def isTrap(pos1, pos2, originalBoard):
         for row2 in pos2:
             playable1= isPlayable( (row1[0], row1[1]), originalBoard )
             playable2= isPlayable( (row2[0], row2[1]), originalBoard )
-            print "considering ", row1, " and ", row2
+            #print "considering ", row1, " and ", row2
             if playable1 and playable2:
                 #those two slots do not depend on each other
-                print" well........"
+                #print" well........"
                 pass
             if not playable2:
                 #see if 2 depends on 1
@@ -812,7 +812,7 @@ def isTrap(pos1, pos2, originalBoard):
                     #1 depends on 2
                     return True
             else:
-                print "should not go in here"
+                #print "should not go in here"
                 pass
     return False
     
@@ -854,7 +854,7 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
                     #print" ok"
                     pass
                 else:
-                    print"this is for opponent"
+                    #print"this is for opponent"
                     temp= py.copy(futureBoard)
                     temp[slotX,slotY]= opponentTurn
                     isLoss2, winner2, pos2= glf.moveYieldsWin(temp, 4, (slotX,slotY), 'r')
@@ -862,8 +862,8 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
                     if isLoss2:
                         #check if any pair seen thus far are actually part of a trap
                         for ((x,y),pos) in possibleLosses:
-                            print "loop"
-                            print "comparing ", pos , " with  ", pos2
+                            #print "loop"
+                            #print "comparing ", pos , " with  ", pos2
                             if isTrap(pos, pos2, originalBoard):
                                 traps.append(  [ ( (x,y),pos ),( (slotX,slotY),pos2 ) ] )
                                 trapFound= True
@@ -880,7 +880,7 @@ def preventTrapPlus(originalBoard, myMove, opponentMove, futureBoard, playerTurn
         for pair in traps:
             for ((x,y), pos) in pair:
                 for row in pos:
-                    print "checking for prevention block: ", row[0], row[1]
+                    #print "checking for prevention block: ", row[0], row[1]
                     if isSafeToPlayPlus( (row[0],row[1]), playerTurn, originalBoard):
                         return 1, (row[0],row[1])
         #before returning, check if myMove is involved in any traps
@@ -914,7 +914,7 @@ def isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirect
     opponentTurn= getOpponent( playerTurn )
     singleLineTraps= [ [0,0, opponentTurn, opponentTurn, 0], [0, opponentTurn, opponentTurn, 0, 0] ]                    
     if not isPossibleWin or numPlayerIDs != 2:
-        print "IN ISSINGLELINETRAP --- not valid, so return False"
+        #print "IN ISSINGLELINETRAP --- not valid, so return False"
         return False, None
         #the two != numPlayerIDs must be playable
     targetLine= []
@@ -922,7 +922,7 @@ def isSingleLineTrap( gameBoard, isPossibleWin, numPlayerIDs, pos, winningDirect
         x,y= row
         targetLine.append( gameBoard[x,y] )
     if targetLine not in singleLineTraps:
-        print "IN ISSINGLELINETRAP --- not valid, so return False because does not match"
+        #print "IN ISSINGLELINETRAP --- not valid, so return False because does not match"
         return False, None
     if targetLine == singleLineTraps[0]:
         #need first, second, and 5th to be playable
@@ -992,7 +992,7 @@ def blockTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
     
     fwinningChains= glf.getSequentialCellsPlus( futureBoard, 4 )
     fopWins= fwinningChains[opponentTurn]
-    print "fopWins: ", fopWins
+    #print "fopWins: ", fopWins
     fnumOpWins= len( fopWins )
     
     if fnumOpWins >= numOpWins + 2:
@@ -1001,7 +1001,7 @@ def blockTrap(originalBoard, myMove, opponentMove, futureBoard, playerTurn):
         #get entries in fwinningChains that are new (i.e not in winningChains)
         newOpPossibleWins= []
         for pair in fopWins:
-            print "pair is: ", pair
+            #print "pair is: ", pair
             posOfPair, directOfPair= pair
             absent= True
             for pos,direct in opWins:

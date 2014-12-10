@@ -1,0 +1,924 @@
+************** Random VS. Random ************************
+With Random=1 and Random=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With Random=1 and Random=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'Random': 10}
+--------------------------------------------------------------
+************** Random VS. RandomPlus ************************
+With RandomPlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'Random': 1, 'RandomPlus': 9}
+--------------------------------------------------------------
+************** Random VS. RandomPlus2 ************************
+With RandomPlus2=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'RandomPlus2': 8, 'Random': 2}
+--------------------------------------------------------------
+************** Random VS. RandomPlusPlus ************************
+With RandomPlusPlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'RandomPlusPlus': 10}
+--------------------------------------------------------------
+************** Random VS. BestLocalPlus ************************
+With BestLocalPlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'BestLocalPlus': 10, 'Random': 0}
+--------------------------------------------------------------
+************** Random VS. lookAheadOne ************************
+With lookAheadOne=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 10, 'Random': 0}
+--------------------------------------------------------------
+************** Random VS. lookAheadTwice ************************
+With lookAheadTwice=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 9, 'Random': 1}
+--------------------------------------------------------------
+************** Random VS. lookAheadThrice ************************
+With lookAheadThrice=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'lookAheadThrice': 10}
+--------------------------------------------------------------
+************** Random VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'lookAheadOnePlus': 10}
+--------------------------------------------------------------
+************** Random VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'lookAheadTwicePlus': 10}
+--------------------------------------------------------------
+************** Random VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThricePlus': 10, 'Random': 0}
+--------------------------------------------------------------
+************** Random VS. randomOffense ************************
+With randomOffense=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'randomOffense': 10}
+--------------------------------------------------------------
+************** Random VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'Random': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** Random VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10, 'Random': 0}
+--------------------------------------------------------------
+************** Random VS. knnPlayer ************************
+With knnPlayer=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'Random': 3, 'knnPlayer': 7}
+--------------------------------------------------------------
+************** Random VS. minimaxKnn ************************
+With minimaxKnn=1 and Random=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With Random=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxKnn': 10, 'Random': 0}
+--------------------------------------------------------------
+************** Random VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and Random=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With Random=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxSeqCellsPlus': 9, 'Random': 1}
+--------------------------------------------------------------
+************** RandomPlus VS. RandomPlus ************************
+With RandomPlus=1 and RandomPlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+With RandomPlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'RandomPlus': 9}
+--------------------------------------------------------------
+************** RandomPlus VS. RandomPlus2 ************************
+With RandomPlus2=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With RandomPlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'RandomPlus2': 5, 'RandomPlus': 5}
+--------------------------------------------------------------
+************** RandomPlus VS. RandomPlusPlus ************************
+With RandomPlusPlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'RandomPlus': 2, 'RandomPlusPlus': 8}
+--------------------------------------------------------------
+************** RandomPlus VS. BestLocalPlus ************************
+With BestLocalPlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'BestLocalPlus': 10, 'RandomPlus': 0}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadOne ************************
+With lookAheadOne=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 10, 'RandomPlus': 0}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadTwice ************************
+With lookAheadTwice=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadTwice=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+Final Results:
+{'lookAheadTwice': 7, 'RandomPlus': 2}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadThrice ************************
+With lookAheadThrice=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus': 0, 'lookAheadThrice': 10}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadOnePlus=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'RandomPlus': 0, 'lookAheadOnePlus': 9}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus': 0, 'lookAheadTwicePlus': 10}
+--------------------------------------------------------------
+************** RandomPlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThricePlus': 10, 'RandomPlus': 0}
+--------------------------------------------------------------
+************** RandomPlus VS. randomOffense ************************
+With randomOffense=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With RandomPlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus': 2, 'randomOffense': 8}
+--------------------------------------------------------------
+************** RandomPlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** RandomPlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10, 'RandomPlus': 0}
+--------------------------------------------------------------
+************** RandomPlus VS. knnPlayer ************************
+With knnPlayer=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With RandomPlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'RandomPlus': 8, 'knnPlayer': 2}
+--------------------------------------------------------------
+************** RandomPlus VS. minimaxKnn ************************
+With minimaxKnn=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With RandomPlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 2, 'RandomPlus': 8}
+--------------------------------------------------------------
+************** RandomPlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and RandomPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxSeqCellsPlus': 10, 'RandomPlus': 0}
+--------------------------------------------------------------
+************** RandomPlus2 VS. RandomPlus2 ************************
+With RandomPlus2=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With RandomPlus2=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus2': 10}
+--------------------------------------------------------------
+************** RandomPlus2 VS. RandomPlusPlus ************************
+With RandomPlusPlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With RandomPlus2=1 and RandomPlusPlus=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+Final Results:
+{'RandomPlus2': 4, 'RandomPlusPlus': 5}
+--------------------------------------------------------------
+************** RandomPlus2 VS. BestLocalPlus ************************
+With BestLocalPlus=1 and RandomPlus2=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+With RandomPlus2=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus2': 0, 'BestLocalPlus': 9}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadOne ************************
+With lookAheadOne=1 and RandomPlus2=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+With RandomPlus2=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 9, 'RandomPlus2': 0}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadTwice ************************
+With lookAheadTwice=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus2': 0, 'lookAheadTwice': 10}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadThrice ************************
+With lookAheadThrice=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and lookAheadThrice=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'RandomPlus2': 0, 'lookAheadThrice': 9}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlus2=1 and lookAheadOnePlus=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'RandomPlus2': 1, 'lookAheadOnePlus': 8}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and lookAheadTwicePlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+Final Results:
+{'RandomPlus2': 1, 'lookAheadTwicePlus': 8}
+--------------------------------------------------------------
+************** RandomPlus2 VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThricePlus': 10, 'RandomPlus2': 0}
+--------------------------------------------------------------
+************** RandomPlus2 VS. randomOffense ************************
+With randomOffense=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlus2=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus2': 1, 'randomOffense': 9}
+--------------------------------------------------------------
+************** RandomPlus2 VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlus2=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlus2': 1, 'randomOffenseWithTwicePlus': 9}
+--------------------------------------------------------------
+************** RandomPlus2 VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 9, 'RandomPlus2': 0}
+--------------------------------------------------------------
+************** RandomPlus2 VS. knnPlayer ************************
+With knnPlayer=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With RandomPlus2=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'RandomPlus2': 8, 'knnPlayer': 2}
+--------------------------------------------------------------
+************** RandomPlus2 VS. minimaxKnn ************************
+With minimaxKnn=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With RandomPlus2=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'RandomPlus2': 9, 'minimaxKnn': 1}
+--------------------------------------------------------------
+************** RandomPlus2 VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and RandomPlus2=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlus2=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'RandomPlus2': 3, 'minimaxSeqCellsPlus': 7}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. RandomPlusPlus ************************
+With RandomPlusPlus=1 and RandomPlusPlus=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+With RandomPlusPlus=1 and RandomPlusPlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+Final Results:
+{'RandomPlusPlus': 8}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. BestLocalPlus ************************
+With BestLocalPlus=1 and RandomPlusPlus=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+With RandomPlusPlus=1 and BestLocalPlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+Final Results:
+{'BestLocalPlus': 7, 'RandomPlusPlus': 1}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadOne ************************
+With lookAheadOne=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlusPlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 9, 'RandomPlusPlus': 1}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadTwice ************************
+With lookAheadTwice=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlusPlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 9, 'RandomPlusPlus': 1}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadThrice ************************
+With lookAheadThrice=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With RandomPlusPlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'RandomPlusPlus': 3, 'lookAheadThrice': 7}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlusPlus=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'RandomPlusPlus': 2, 'lookAheadOnePlus': 8}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and RandomPlusPlus=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+With RandomPlusPlus=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'RandomPlusPlus': 2, 'lookAheadTwicePlus': 6}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlusPlus=1 and lookAheadThricePlus=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+Final Results:
+{'lookAheadThricePlus': 7, 'RandomPlusPlus': 2}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. randomOffense ************************
+With randomOffense=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlusPlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'RandomPlusPlus': 1, 'randomOffense': 9}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With RandomPlusPlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'RandomPlusPlus': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlusPlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 2, 1.0: 1, 2.0: 2}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 6, 'RandomPlusPlus': 2}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. knnPlayer ************************
+With knnPlayer=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With RandomPlusPlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'RandomPlusPlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. minimaxKnn ************************
+With minimaxKnn=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With RandomPlusPlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 0, 'RandomPlusPlus': 10}
+--------------------------------------------------------------
+************** RandomPlusPlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and RandomPlusPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With RandomPlusPlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'minimaxSeqCellsPlus': 8, 'RandomPlusPlus': 2}
+--------------------------------------------------------------
+************** BestLocalPlus VS. BestLocalPlus ************************
+With BestLocalPlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'BestLocalPlus': 10}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadOne ************************
+With lookAheadOne=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadOne': 4, 'BestLocalPlus': 6}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadTwice ************************
+With lookAheadTwice=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'BestLocalPlus': 9, 'lookAheadTwice': 1}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadThrice ************************
+With lookAheadThrice=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'BestLocalPlus': 6, 'lookAheadThrice': 4}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With BestLocalPlus=1 and lookAheadOnePlus=2, wins: {0.0: 2, 1.0: 0, 2.0: 3}
+Final Results:
+{'BestLocalPlus': 4, 'lookAheadOnePlus': 4}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and BestLocalPlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+With BestLocalPlus=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'BestLocalPlus': 5, 'lookAheadTwicePlus': 4}
+--------------------------------------------------------------
+************** BestLocalPlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and BestLocalPlus=2, wins: {0.0: 3, 1.0: 1, 2.0: 1}
+With BestLocalPlus=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadThricePlus': 5, 'BestLocalPlus': 2}
+--------------------------------------------------------------
+************** BestLocalPlus VS. randomOffense ************************
+With randomOffense=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With BestLocalPlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'BestLocalPlus': 3, 'randomOffense': 7}
+--------------------------------------------------------------
+************** BestLocalPlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With BestLocalPlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+Final Results:
+{'BestLocalPlus': 1, 'randomOffenseWithTwicePlus': 8}
+--------------------------------------------------------------
+************** BestLocalPlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 1, 1.0: 3, 2.0: 1}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 1, 'BestLocalPlus': 8}
+--------------------------------------------------------------
+************** BestLocalPlus VS. knnPlayer ************************
+With knnPlayer=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'BestLocalPlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** BestLocalPlus VS. minimaxKnn ************************
+With minimaxKnn=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With BestLocalPlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'BestLocalPlus': 10, 'minimaxKnn': 0}
+--------------------------------------------------------------
+************** BestLocalPlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and BestLocalPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With BestLocalPlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'BestLocalPlus': 0, 'minimaxSeqCellsPlus': 10}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadOne ************************
+With lookAheadOne=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadOne=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 10}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadTwice ************************
+With lookAheadTwice=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With lookAheadOne=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'lookAheadOne': 7, 'lookAheadTwice': 3}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadThrice ************************
+With lookAheadThrice=1 and lookAheadOne=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+With lookAheadOne=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'lookAheadOne': 7, 'lookAheadThrice': 2}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With lookAheadOne=1 and lookAheadOnePlus=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'lookAheadOne': 3, 'lookAheadOnePlus': 6}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With lookAheadOne=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadOne': 3, 'lookAheadTwicePlus': 7}
+--------------------------------------------------------------
+************** lookAheadOne VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadOne=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+With lookAheadOne=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 1, 'lookAheadThricePlus': 7}
+--------------------------------------------------------------
+************** lookAheadOne VS. randomOffense ************************
+With randomOffense=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With lookAheadOne=1 and randomOffense=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadOne': 4, 'randomOffense': 6}
+--------------------------------------------------------------
+************** lookAheadOne VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadOne=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** lookAheadOne VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadOne=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadOne': 10, 'randomOffenseOneWithTwicePlus': 0}
+--------------------------------------------------------------
+************** lookAheadOne VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadOne=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadOne': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** lookAheadOne VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadOne=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadOne': 10, 'minimaxKnn': 0}
+--------------------------------------------------------------
+************** lookAheadOne VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadOne=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadOne=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadOne': 0, 'minimaxSeqCellsPlus': 10}
+--------------------------------------------------------------
+************** lookAheadTwice VS. lookAheadTwice ************************
+With lookAheadTwice=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With lookAheadTwice=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'lookAheadTwice': 10}
+--------------------------------------------------------------
+************** lookAheadTwice VS. lookAheadThrice ************************
+With lookAheadThrice=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwice=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'lookAheadTwice': 7, 'lookAheadThrice': 3}
+--------------------------------------------------------------
+************** lookAheadTwice VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwice=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'lookAheadTwice': 7, 'lookAheadOnePlus': 3}
+--------------------------------------------------------------
+************** lookAheadTwice VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and lookAheadTwice=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+With lookAheadTwice=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 1, 'lookAheadTwicePlus': 8}
+--------------------------------------------------------------
+************** lookAheadTwice VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadTwice=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+With lookAheadTwice=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadThricePlus': 4, 'lookAheadTwice': 5}
+--------------------------------------------------------------
+************** lookAheadTwice VS. randomOffense ************************
+With randomOffense=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With lookAheadTwice=1 and randomOffense=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'lookAheadTwice': 4, 'randomOffense': 6}
+--------------------------------------------------------------
+************** lookAheadTwice VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadTwice=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 1, 'randomOffenseWithTwicePlus': 9}
+--------------------------------------------------------------
+************** lookAheadTwice VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwice=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 3, 'lookAheadTwice': 7}
+--------------------------------------------------------------
+************** lookAheadTwice VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwice=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadTwice': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** lookAheadTwice VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwice=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadTwice': 10, 'minimaxKnn': 0}
+--------------------------------------------------------------
+************** lookAheadTwice VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadTwice=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 1, 'minimaxSeqCellsPlus': 9}
+--------------------------------------------------------------
+************** lookAheadThrice VS. lookAheadTwice ************************
+With lookAheadTwice=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With lookAheadThrice=1 and lookAheadTwice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadTwice': 5, 'lookAheadThrice': 5}
+--------------------------------------------------------------
+************** lookAheadThrice VS. lookAheadThrice ************************
+With lookAheadThrice=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThrice=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadThrice': 10}
+--------------------------------------------------------------
+************** lookAheadThrice VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With lookAheadThrice=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadOnePlus': 6, 'lookAheadThrice': 4}
+--------------------------------------------------------------
+************** lookAheadThrice VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and lookAheadThrice=2, wins: {0.0: 4, 1.0: 0, 2.0: 1}
+With lookAheadThrice=1 and lookAheadTwicePlus=2, wins: {0.0: 3, 1.0: 0, 2.0: 2}
+Final Results:
+{'lookAheadThrice': 1, 'lookAheadTwicePlus': 2}
+--------------------------------------------------------------
+************** lookAheadThrice VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadThrice=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+With lookAheadThrice=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThricePlus': 7, 'lookAheadThrice': 1}
+--------------------------------------------------------------
+************** lookAheadThrice VS. randomOffense ************************
+With randomOffense=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadThrice=1 and randomOffense=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+Final Results:
+{'randomOffense': 8, 'lookAheadThrice': 2}
+--------------------------------------------------------------
+************** lookAheadThrice VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadThrice=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThrice': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** lookAheadThrice VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThrice=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 5, 'lookAheadThrice': 5}
+--------------------------------------------------------------
+************** lookAheadThrice VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThrice=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadThrice': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** lookAheadThrice VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThrice=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 0, 'lookAheadThrice': 10}
+--------------------------------------------------------------
+************** lookAheadThrice VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadThrice=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadThrice=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'minimaxSeqCellsPlus': 7, 'lookAheadThrice': 3}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. lookAheadOnePlus ************************
+With lookAheadOnePlus=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+With lookAheadOnePlus=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'lookAheadOnePlus': 10}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and lookAheadOnePlus=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+With lookAheadOnePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 2, 1.0: 1, 2.0: 2}
+Final Results:
+{'lookAheadOnePlus': 2, 'lookAheadTwicePlus': 4}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadOnePlus=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+With lookAheadOnePlus=1 and lookAheadThricePlus=2, wins: {0.0: 2, 1.0: 0, 2.0: 3}
+Final Results:
+{'lookAheadThricePlus': 5, 'lookAheadOnePlus': 2}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. randomOffense ************************
+With randomOffense=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+With lookAheadOnePlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'randomOffense': 5, 'lookAheadOnePlus': 5}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadOnePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'lookAheadOnePlus': 0, 'randomOffenseWithTwicePlus': 9}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadOnePlus=2, wins: {0.0: 5, 1.0: 0, 2.0: 0}
+With lookAheadOnePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 4, 'lookAheadOnePlus': 1}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadOnePlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadOnePlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadOnePlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 5, 'lookAheadOnePlus': 5}
+--------------------------------------------------------------
+************** lookAheadOnePlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadOnePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadOnePlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'minimaxSeqCellsPlus': 6, 'lookAheadOnePlus': 4}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. lookAheadTwicePlus ************************
+With lookAheadTwicePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 4, 1.0: 1, 2.0: 0}
+With lookAheadTwicePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+Final Results:
+{'lookAheadTwicePlus': 5}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+With lookAheadTwicePlus=1 and lookAheadThricePlus=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+Final Results:
+{'lookAheadThricePlus': 3, 'lookAheadTwicePlus': 3}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. randomOffense ************************
+With randomOffense=1 and lookAheadTwicePlus=2, wins: {0.0: 2, 1.0: 0, 2.0: 3}
+With lookAheadTwicePlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 1, 2.0: 4}
+Final Results:
+{'randomOffense': 4, 'lookAheadTwicePlus': 4}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 1, 1.0: 4, 2.0: 0}
+With lookAheadTwicePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+Final Results:
+{'randomOffenseWithTwicePlus': 6, 'lookAheadTwicePlus': 3}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwicePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 3, 1.0: 1, 2.0: 1}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 1, 'lookAheadTwicePlus': 6}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwicePlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'knnPlayer': 0, 'lookAheadTwicePlus': 10}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwicePlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 0, 'lookAheadTwicePlus': 10}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. lookAheadThricePlus ************************
+With lookAheadThricePlus=1 and lookAheadThricePlus=2, wins: {0.0: 2, 1.0: 1, 2.0: 2}
+With lookAheadThricePlus=1 and lookAheadThricePlus=2, wins: {0.0: 2, 1.0: 2, 2.0: 1}
+Final Results:
+{'lookAheadThricePlus': 6}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. randomOffense ************************
+With randomOffense=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With lookAheadThricePlus=1 and randomOffense=2, wins: {0.0: 1, 1.0: 0, 2.0: 4}
+Final Results:
+{'lookAheadThricePlus': 0, 'randomOffense': 9}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With lookAheadThricePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'lookAheadThricePlus': 2, 'randomOffenseWithTwicePlus': 8}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThricePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 1, 1.0: 1, 2.0: 3}
+Final Results:
+{'lookAheadThricePlus': 6, 'randomOffenseOneWithTwicePlus': 3}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. knnPlayer ************************
+With knnPlayer=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThricePlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadThricePlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. minimaxKnn ************************
+With minimaxKnn=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThricePlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'lookAheadThricePlus': 10, 'minimaxKnn': 0}
+--------------------------------------------------------------
+************** randomOffense VS. randomOffense ************************
+With randomOffense=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffense=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffense': 10}
+--------------------------------------------------------------
+************** randomOffense VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With randomOffense=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffense': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** randomOffense VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With randomOffense=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10, 'randomOffense': 0}
+--------------------------------------------------------------
+************** randomOffense VS. knnPlayer ************************
+With knnPlayer=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffense=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'randomOffense': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** randomOffense VS. minimaxKnn ************************
+With minimaxKnn=1 and randomOffense=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffense=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 0, 'randomOffense': 10}
+--------------------------------------------------------------
+************** randomOffenseWithTwicePlus VS. randomOffenseWithTwicePlus ************************
+With randomOffenseWithTwicePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 2, 2.0: 3}
+With randomOffenseWithTwicePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 1, 1.0: 2, 2.0: 2}
+Final Results:
+{'randomOffenseWithTwicePlus': 9}
+--------------------------------------------------------------
+************** randomOffenseWithTwicePlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseWithTwicePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 2, 1.0: 3, 2.0: 0}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 0, 'randomOffenseWithTwicePlus': 8}
+--------------------------------------------------------------
+************** randomOffenseWithTwicePlus VS. knnPlayer ************************
+With knnPlayer=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseWithTwicePlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'randomOffenseWithTwicePlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** randomOffenseWithTwicePlus VS. minimaxKnn ************************
+With minimaxKnn=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseWithTwicePlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxKnn': 0, 'randomOffenseWithTwicePlus': 10}
+--------------------------------------------------------------
+************** randomOffenseOneWithTwicePlus VS. randomOffenseOneWithTwicePlus ************************
+With randomOffenseOneWithTwicePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseOneWithTwicePlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10}
+--------------------------------------------------------------
+************** randomOffenseOneWithTwicePlus VS. knnPlayer ************************
+With knnPlayer=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseOneWithTwicePlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** randomOffenseOneWithTwicePlus VS. minimaxKnn ************************
+With minimaxKnn=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseOneWithTwicePlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 10, 'minimaxKnn': 0}
+--------------------------------------------------------------
+************** knnPlayer VS. knnPlayer ************************
+With knnPlayer=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With knnPlayer=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'knnPlayer': 10}
+--------------------------------------------------------------
+************** knnPlayer VS. minimaxKnn ************************
+With minimaxKnn=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With knnPlayer=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxKnn': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** minimaxKnn VS. minimaxKnn ************************
+With minimaxKnn=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With minimaxKnn=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxKnn': 10}
+--------------------------------------------------------------
+************** lookAheadTwicePlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadTwicePlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'minimaxSeqCellsPlus': 1, 'lookAheadTwicePlus': 9}
+--------------------------------------------------------------
+************** lookAheadThricePlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and lookAheadThricePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With lookAheadThricePlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 3, 1.0: 0, 2.0: 2}
+Final Results:
+{'lookAheadThricePlus': 5, 'minimaxSeqCellsPlus': 2}
+--------------------------------------------------------------
+************** randomOffense VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and randomOffense=2, wins: {0.0: 0, 1.0: 3, 2.0: 2}
+With randomOffense=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+Final Results:
+{'minimaxSeqCellsPlus': 3, 'randomOffense': 7}
+--------------------------------------------------------------
+************** randomOffenseWithTwicePlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and randomOffenseWithTwicePlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+With randomOffenseWithTwicePlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 4, 2.0: 1}
+Final Results:
+{'minimaxSeqCellsPlus': 1, 'randomOffenseWithTwicePlus': 9}
+--------------------------------------------------------------
+************** randomOffenseOneWithTwicePlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and randomOffenseOneWithTwicePlus=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With randomOffenseOneWithTwicePlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'randomOffenseOneWithTwicePlus': 0, 'minimaxSeqCellsPlus': 10}
+--------------------------------------------------------------
+************** knnPlayer VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and knnPlayer=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With knnPlayer=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxSeqCellsPlus': 10, 'knnPlayer': 0}
+--------------------------------------------------------------
+************** minimaxKnn VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and minimaxKnn=2, wins: {0.0: 0, 1.0: 5, 2.0: 0}
+With minimaxKnn=1 and minimaxSeqCellsPlus=2, wins: {0.0: 0, 1.0: 0, 2.0: 5}
+Final Results:
+{'minimaxKnn': 0, 'minimaxSeqCellsPlus': 10}
+--------------------------------------------------------------
+************** minimaxSeqCellsPlus VS. minimaxSeqCellsPlus ************************
+With minimaxSeqCellsPlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 5, 1.0: 0, 2.0: 0}
+With minimaxSeqCellsPlus=1 and minimaxSeqCellsPlus=2, wins: {0.0: 5, 1.0: 0, 2.0: 0}
+Final Results:
+{'minimaxSeqCellsPlus': 0}
+--------------------------------------------------------------
