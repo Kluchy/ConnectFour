@@ -435,7 +435,6 @@ def lookAheadThricePlus(gameBoard, playerTurn):
         #print "lookAheadThricePlus: --- FOUND IS BLOCK OR WIN FROM BESTLOCALMOVEPLUS"
         return bestMove, isBlockOrWin
     elif isBlockOrWin == 2:
-        #print "PREVENTION WORKS WITH LOOKAHEADTHRICEPLUS!!!!!!"
         return bestMove, 2
 
     bestBoard= py.copy(gameBoard)
@@ -504,21 +503,12 @@ def lookAheadThricePlus(gameBoard, playerTurn):
                 newSequentialCells= glf.getSequentialCellsPlus( newBoard, 4 )
                 newWinOpportunities= newSequentialCells[playerTurn]
                 newLoseOpportunities= newSequentialCells[opponentTurn]
-                #print"About to compare boards...", len(newWinOpportunities), "vs ", len(oldWinOpportunities)
-                #print "lookAheadThricePlus ---- let's consider what happens if we played at ", x,y
-                #print "lookAheadThricePlus ---- About to compare boards...", len(newLoseOpportunities), "vs ", len(oldLoseOpportunities)
-                #if len(newWinOpportunities) > len(oldWinOpportunities):
+
                 myScores, yourScores, candidateSlots= aif.scoreBoard(newBoard, playerTurn)
                 if aif.isSafeToPlay((x,y), yourOrScores, gameBoard) and len(newLoseOpportunities) < len(oldLoseOpportunities):
-                #if len(newWinOpportunities) > len(oldWinOpportunities):
-                    #print "lookAheadThricePlus ---- FOUND SOMETHING BETTER THAN LOOKAHEADTWICEPLUS: ", x,y
                     bestMove= (x,y)
                     bestBoard= newBoard
-                '''isNewBetter, myScore, yourScore= aif.isBetterState(newBoard, bestBoard, playerTurn)
-                if isNewBetter == 1:
-                    print "FOUND SOMETHING BETTER THAN LOOKAHEADONE: ", x,y
-                    bestMove= (x,y)
-                    bestBoard= newBoard'''
+
     #return move leading to that state
     if trapFlag == -1 and bestMove == slot:
         #print "OOOOOOOOOOOOH NOOOOooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo DON'T PLAY THERE"
@@ -626,6 +616,7 @@ def randomOffenseOneWithTwicePlus( gameBoard, playerTurn ):
   '@return best move as determined by aif.nextMove
   '@calling aif.nextMove
   '@caller gl.gamePlay
+  '@NOTE NOT USED
   '''
 def forwardEval( gameBoard, playerTurn ):
     '''move, flag= randomOffenseWithTwicePlus( gameBoard, playerTurn )
@@ -654,7 +645,6 @@ def knnPlayer( trainPlies, gameBoard, playerTurn ):
         numrows, numColumns= py.shape(gameBoard)
         for i in range(0,numColumns):
             plie+=  reversed( gameBoard[0:numrows,i] ) 
-        #print "plie is: ", plie
         acc= aif.knn( 150, trainPlies, plie, playerTurn )
         if acc > bestAcc:
             #probably win for us
@@ -707,18 +697,6 @@ def minimaxSeqCellsPlus( trainPlies, gameBoard, playerTurn ):
     for child in childrenNodes:
         if child.value == bestAcc:
             bestMove= child.move
-            #print "WE GOT A GOOD MOVE, WE GOT A GOOD MOVE, WE GOT A GOOD MOVE"
             return bestMove, 0
         else:
-            #print str(child.value) + " != " + str(bestAcc) + " THIS SHOULD NOT HAPPEN WHAT IS GOING ON SOMEETHING MUST BE WRONG WITH SCORING TREE"
             pass
-    
-'''b= py.zeros((6,7))
-(x,y),z= randomOffense(b, 1)'''
-
-'''b= py.zeros((6,7))
-b[5,4:7]= 1
-b[2:5,6]=2
-#x,y= bestLocalMove(b, 1)
-#x,y= lookAheadTwice(b, 1)
-x,y= lookAheadThrice(b, 1)'''

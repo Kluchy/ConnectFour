@@ -515,20 +515,3 @@ def adjustData(trainPlies, playerTurn):
             instance[-1]= 'draw'
     
     return adjustedPlies
-
-        
-
-'''#testing yieldsWin
-b= py.zeros((6,7))
-b[0,0:3]= 1
-b[1:4,0]= 2
-b[4,0]= 2
-b[0,4]= 1
-b[1,1]= 1
-b[2,2]= 1
-b[3,3]= 2
-b[5,1:4]= 1
-b[3:6,6]= 2
-#res,winner,pos= moveYieldsWin(b, 4, (3,0),'r')
-#res,winner,pos,direction= boardContainsWinner(b, 4)
-cells= getSequentialCellsPlus(b, 2)'''

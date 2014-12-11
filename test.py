@@ -1,13 +1,11 @@
 #statisitcs script for connect four game
 import gamelogic as gl
-import aiplayer as ai
-import time
 import gamelogicfunctions as glf
 
 fileText= ""
 fileName= "output"
-startIndexI= 11
-startIndexJ= 16
+startIndexI= 0
+startIndexJ= 0
 
 def battle(playerMode1, playerMode2):
     global fileText, trainPlies
@@ -50,11 +48,8 @@ def autotest():
             with open(fileName, 'a') as f:
                 f.write( fileText )
             fileText= ""
-        #startIndexJ= i + 1
+        startIndexJ= i + 1        
     
-    
-#battle("BestLocalPlus", "lookAheadThricePlus")
-#battle("lookAheadTwicePlus", "randomOffenseWithTwicePlus")
 trainPlies= dict()
 trainPlies[1]= glf.getData()
 trainPlies[2]= glf.adjustData(trainPlies[1], 2)

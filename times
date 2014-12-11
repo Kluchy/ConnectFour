@@ -1,0 +1,17 @@
+average time for Random = 2.578326634e-05
+average time for RandomPlus = 0.000653245232322
+average time for RandomPlus2 = 0.002636867411
+average time for RandomPlusPlus = 0.0015105009079
+average time for BestLocalPlus = 0.0120407104492
+average time for lookAheadOne = 0.0127007166545
+average time for lookAheadTwice = 0.186558445295
+average time for lookAheadThrice = 1.85374236107
+average time for lookAheadOnePlus = 0.107245743275
+average time for lookAheadTwicePlus = 0.819543021066
+average time for lookAheadThricePlus = 22.0458344817
+average time for randomOffense = 0.00936102867126
+average time for randomOffenseWithTwicePlus = 0.914949456851
+average time for randomOffenseOneWithTwicePlus = 5.60841661692
+average time for knnPlayer = 0.0950499176979
+average time for minimaxKnn = 21.6065003342
+average time for minimaxSeqCellsPlus = 11.721811384
